@@ -54,6 +54,14 @@ abstract class ModulePrototype extends ControllerPrototype
         return isset(static::$controllers[$shortName]);
     }
 
+    public function runControllerAction($controller, $action)
+    {
+        if (isset($this->config['controllers'][$controller])) {
+            $controller = $this->config['controllers'][$controller];
+        }
+        (new $controller(null, $this))->performAction($action);
+    }
+
     /**
      * Создание компонента по имени
      * @param $componentName

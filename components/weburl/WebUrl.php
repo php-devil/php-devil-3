@@ -31,6 +31,36 @@ class WebUrl extends Component implements WebUrlInterface
     }
 
     /**
+     * Преобразование следующего вхождения запроса
+     * в CamelCase. При отсутствии следующего вхождения вернет null
+     */
+    private function classNameFromUrl()
+    {
+        if ($urlPart = $this->request->getNext()) {
+            return str_replace(' ', '', ucwords(str_replace('-', ' ', $urlPart)));
+
+        } else {
+            return null;
+        }
+    }
+
+    public function nextUrlToController($nameSpace)
+    {
+        if ($name = $this->classNameFromUrl()) {
+            return $nameSpace . $name . 'Controller';
+        } else {
+            return null;
+        }
+    }
+
+    public function nextUrlToAction()
+    {
+        return $this->classNameFromUrl();
+    }
+
+
+
+    /**
      * Получение списка динамически монтируемых модулей.
      * В конфигурации компонента должна быть указана модель, отвечающая за
      * url адреса модулей (как правило - модель структуры сайта)
