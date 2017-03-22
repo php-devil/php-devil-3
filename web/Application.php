@@ -3,7 +3,14 @@ namespace PhpDevil\framework\web;
 
 use PhpDevil\framework\components\weburl\WebUrl;
 use PhpDevil\framework\components\weburl\WebUrlInterface;
+use PhpDevil\framework\web\http\HttpException;
 
+/**
+ * Class Application
+ *
+ * @property WebUrlInterface $url
+ * @package PhpDevil\framework\web
+ */
 class Application extends \PhpDevil\framework\base\Application
 {
     /**
@@ -12,7 +19,7 @@ class Application extends \PhpDevil\framework\base\Application
      * с параметрами по умолчанию
      * @var array
      */
-    protected $defaultComponents = [
+    protected static $defaultComponents = [
         'url' => [WebUrl::class, WebUrlInterface::class],
     ];
 
@@ -25,7 +32,16 @@ class Application extends \PhpDevil\framework\base\Application
     {
         \Devil::registerApplication($this);
         if ($moduleID = $this->url->isModuleRequested()) {
-            echo $moduleID;
+            if ($module = $this->loadModule($moduleID)) {
+                if ($module->beforeRun()) {
+                    $module->run();
+                    $module->afterRun();
+                } else {
+                    $module->errorRun();
+                }
+            } else {
+                throw new HttpException(HttpException::NOT_FOUND);
+            }
         }
     }
 }
