@@ -1,7 +1,7 @@
 {
   "name":              "php-devil/php-devil-framework",
   "description":       "PHP Framework for Web and Console Applications",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "license":           "MIT",
   "authors": [
     {
@@ -13,5 +13,8 @@
     "psr-4": {
       "PhpDevil\\framework\\": ""
     }
+  },
+  "require": {
+    "php-devil/php-devil-orm": "^0.0-dev"
   }
 }
