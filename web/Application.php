@@ -24,8 +24,8 @@ class Application extends \PhpDevil\framework\base\Application
     final public function run()
     {
         \Devil::registerApplication($this);
-        if ($moduleName = $this->url->isModuleRequested()) {
-            echo 'module';
+        if ($moduleID = $this->url->isModuleRequested()) {
+            echo $moduleID;
         }
     }
 }

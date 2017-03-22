@@ -16,6 +16,21 @@ class WebUrl extends Component implements WebUrlInterface
     private $modulesRequests = null;
 
     /**
+     * Если запрос пользователя начинается с точки монтирования модуля,
+     * возвращает его идентификатор в том виде, как указано в конфигурации приложения
+     * @return string|null
+     */
+    public function isModuleRequested()
+    {
+        if (is_array($this->modulesRequests)) foreach ($this->modulesRequests as $url=>$id) {
+            if (0 === strpos($this->request->getUnusedUri(), $url)) {
+                return $id;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Получение списка динамически монтируемых модулей.
      * В конфигурации компонента должна быть указана модель, отвечающая за
      * url адреса модулей (как правило - модель структуры сайта)
