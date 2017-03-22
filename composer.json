@@ -1,0 +1,17 @@
+{
+  "name":              "php-devil/php-devil-framework",
+  "description":       "PHP Framework for Web and Console Applications",
+  "minimum-stability": "stable",
+  "license":           "MIT",
+  "authors": [
+    {
+      "name":  "Alexey Volkov",
+      "email": "alex.phpdevil@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "PhpDevil\\framework\\": ""
+    }
+  }
+}
