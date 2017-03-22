@@ -12,7 +12,8 @@
   "autoload": {
     "psr-4": {
       "PhpDevil\\framework\\": ""
-    }
+    },
+    "classmap": ["Devil.php"]
   },
   "require": {
     "php-devil/php-devil-orm": "dev-master"
