@@ -15,6 +15,6 @@
     }
   },
   "require": {
-    "php-devil/php-devil-orm": "^0.1.x-dev"
+    "php-devil/php-devil-orm": "^0.0.x-dev"
   }
 }
