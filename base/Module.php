@@ -1,7 +1,7 @@
 <?php
 namespace PhpDevil\framework\base;
 
-class Module extends ModulePrototype
+class Module extends ModulePrototype implements ModuleInterface
 {
     /**
      * Проверка разрешений на выполнение модуля
@@ -30,14 +30,6 @@ class Module extends ModulePrototype
 
     }
 
-    /**
-     * Запуск модуля на выполнение.
-     * Сценарий по умолчанию - первое вхождение урла - контроллер, второе - действие.
-     * Если вхождение одно (контроллер) - запускается actionIndex()
-     */
-    public function run()
-    {
-
-    }
+    
 
 }

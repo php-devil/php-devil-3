@@ -41,7 +41,8 @@ abstract class ModulePrototype extends ControllerPrototype
      */
     public static function hasModel($shortName)
     {
-        return isset(static::$models[$shortName]);
+        $models = static::models();
+        return isset($models[$shortName]);
     }
 
     /**
@@ -51,15 +52,60 @@ abstract class ModulePrototype extends ControllerPrototype
      */
     public static function hasController($shortName)
     {
-        return isset(static::$controllers[$shortName]);
+        $controllers = static::controllers();
+        return isset($controllers[$shortName]);
+    }
+
+    /**
+     * Загрузка контроллера
+     * @param $controller
+     * @param null $config
+     * @return mixed
+     */
+    public function loadController($controller, $config = null)
+    {
+        $tagName = null;
+        $controllers = static::controllers();
+        if (isset($controllers[$controller])) {
+            $className = $controllers[$controller];
+            $tagName = $controller;
+        } else {
+            $className = $this->getNamespace() . '\\controllers\\' . \Devil::app()->url->classNameFromUrl($controller).'Controller';
+        }
+        $controller = new $className($config, $this);
+        if (null === $tagName) {
+            $tagName = substr($className, intval(strrpos($className, '\\') + 1), - 10);
+        }
+        $controller->setTagName($tagName);
+        return $controller;
+    }
+
+    /**
+     * Запуск модуля на выполнение.
+     * Сценарий по умолчанию - первое вхождение урла - контроллер, второе - действие.
+     * Если вхождение одно (контроллер) - запускается actionIndex()
+     */
+    public function run()
+    {
+        $controllerName = \Devil::app()->url->nextUrlToController();
+        if (null === $controllerName) {
+            $controllerName = '\\app\\controllers\\SiteController';
+        }
+        $actionName = \Devil::app()->url->nextUrlToAction();
+        if (null === $actionName) {
+            if ($this instanceof ApplicationInterface) {
+                $actionName = 'Index';
+            } else {
+                $actionName = 'Default';
+            }
+
+        }
+        $this->runControllerAction($controllerName, $actionName);
     }
 
     public function runControllerAction($controller, $action)
     {
-        if (isset($this->config['controllers'][$controller])) {
-            $controller = $this->config['controllers'][$controller];
-        }
-        (new $controller(null, $this))->performAction($action);
+        $this->loadController($controller)->performAction($action);
     }
 
     /**
@@ -75,15 +121,19 @@ abstract class ModulePrototype extends ControllerPrototype
             $requiredInterface = isset(static::$defaultComponents[$componentName][1])
                 ? static::$defaultComponents[$componentName][1]
                 : null;
-            $componentConfig = isset($this->config['components'][$componentName])
-                ? $this->config['components'][$componentName]
-                : null;
+            $componentConfig = isset(static::$defaultComponents[$componentName][2])
+                ? static::$defaultComponents[$componentName][2]
+                : [];
+            if (isset($this->config['components'][$componentName])){
+                $componentConfig = array_merge($componentConfig, $this->config['components'][$componentName]);
+            }
             $componentClassName = isset($componentConfig['class'])
                 ? $componentConfig['class']
                 : isset(static::$defaultComponents[$componentName][0])
                     ? static::$defaultComponents[$componentName][0]
                     : null;
             unset($this->config['components'][$componentName]);
+            if (isset($componentConfig['class']))
             unset($componentConfig['class']);
             if ($componentClassName) {
                 $instance = new $componentClassName($componentConfig, $this);

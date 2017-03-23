@@ -14,6 +14,13 @@ class Request
         return substr($this->uri, $this->uriPointer);
     }
 
+    public function setAsUsed($url)
+    {
+        if (0 === strpos('/' . $this->getUnusedUri(), $url)) {
+            $this->uriPointer += strlen($url) - 1;
+        }
+    }
+
     public function getNext()
     {
         $nextUri = null;

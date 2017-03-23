@@ -5,6 +5,8 @@ class Configurable
 {
     protected $config = null;
 
+    protected $virtualLocation = null;
+
     /**
      * Назначение массива конфигурации объекту
      * @param array|null $config
@@ -29,6 +31,29 @@ class Configurable
             return $this->config[$keyName];
         } else {
             return null;
+        }
+    }
+    
+    /**
+     * Определение директории, в которой расположен файл класса
+     * @return string
+     */
+    public static function getLocationStatic()
+    {
+        return dirname((new \ReflectionClass(static::class))->getFileName());
+    }
+
+    /**
+     * Определение лиректории в которой расположен файл класса
+     * или располагался бы (если вмртуальный класс задан прототипом)
+     * @return null|string
+     */
+    public function getLocation()
+    {
+        if ($this->virtualLocation) {
+            return $this->virtualLocation;
+        } else {
+            return dirname((new \ReflectionClass(static::class))->getFileName());
         }
     }
 }

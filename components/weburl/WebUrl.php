@@ -22,35 +22,37 @@ class WebUrl extends Component implements WebUrlInterface
      */
     public function isModuleRequested()
     {
+        $unused = '/' . $this->request->getUnusedUri();
         if (is_array($this->modulesRequests)) foreach ($this->modulesRequests as $url=>$id) {
-            if (0 === strpos($this->request->getUnusedUri(), $url)) {
+            if (0 === strpos($unused, $url)) {
                 return $id;
             }
         }
         return null;
     }
 
+    public function useModule($id)
+    {
+        $this->request->setAsUsed($this->modulesUrls[$id]);
+    }
+
     /**
      * Преобразование следующего вхождения запроса
      * в CamelCase. При отсутствии следующего вхождения вернет null
      */
-    private function classNameFromUrl()
+    public function classNameFromUrl($urlPart = null)
     {
-        if ($urlPart = $this->request->getNext()) {
+        if (null === $urlPart) $urlPart = $this->request->getNext();
+        if ($urlPart) {
             return str_replace(' ', '', ucwords(str_replace('-', ' ', $urlPart)));
-
         } else {
             return null;
         }
     }
 
-    public function nextUrlToController($nameSpace)
+    public function nextUrlToController($nameSpace = null)
     {
-        if ($name = $this->classNameFromUrl()) {
-            return $nameSpace . $name . 'Controller';
-        } else {
-            return null;
-        }
+        return $this->request->getNext();
     }
 
     public function nextUrlToAction()

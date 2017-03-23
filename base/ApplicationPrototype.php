@@ -10,7 +10,9 @@ abstract class ApplicationPrototype extends ModulePrototype
             if (isset($moduleConfig['class'])) {
                 $className = $moduleConfig['class'];
                 unset($moduleConfig['class']);
-                return new $className($moduleConfig);
+                $module = new $className($moduleConfig);
+                $module->setTagName($id);
+                return $module;
             }
         }
         return false;
