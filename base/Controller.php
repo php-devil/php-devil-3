@@ -2,7 +2,7 @@
 namespace PhpDevil\framework\base;
 
 
-abstract class Controller extends ControllerPrototype
+abstract class Controller extends ControllerPrototype implements ControllerInterface
 {
     abstract public function render($view, $attributes = []);
 
@@ -32,11 +32,30 @@ abstract class Controller extends ControllerPrototype
         }
     }
 
+    final protected function runActionClass($class, $actionName, $param = [])
+    {
+        if ($this->beforeAction($actionName)) {
+            $param['controller'] = $this;
+            call_user_func_array([$class, 'run'], $param);
+            $this->afterAction($actionName);
+        } else {
+            $this->errorAction($actionName);
+        }
+    }
+
     public function performAction($actionName, $param = [])
     {
         $methodName = 'action' . $actionName;
         if (method_exists($this, $methodName)) {
             $this->runActionMethod($actionName, $param);
+        } else {
+            $actionClass = substr(get_class($this), 0, strrpos(get_class($this), '\\')+1) . $this->getTagName() . '\\';
+            $actionClass .= $actionName . 'Action';
+            if (class_exists($actionClass)) {
+                $this->runActionClass($actionClass, $actionName);
+            } else {
+                echo 'from config';
+            }
         }
     }
 }

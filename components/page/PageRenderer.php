@@ -39,6 +39,12 @@ class PageRenderer extends Component implements PageRendererInterface
         $this->assets->publish($className, $registerName);
     }
 
+    public function __set($name, $value)
+    {
+        $this->createAdapter();
+        $this->adapter->assignVar($name, $value);
+    }
+
     /**
      * Доступ к классу, вызвавшему отображение представления
      * @return Renderable
@@ -54,12 +60,14 @@ class PageRenderer extends Component implements PageRendererInterface
     }
 
     public function css($value = null) {
+        if (null === $this->assets) $this->assets = new AssetManager;
         if (null === $value) {
             return $this->assets->css();
         }
     }
 
     public function js($value = null) {
+        if (null === $this->assets) $this->assets = new AssetManager;
         if (null === $value) {
             return $this->assets->js();
         }

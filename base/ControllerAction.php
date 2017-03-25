@@ -11,5 +11,5 @@ namespace PhpDevil\framework\base;
 
 abstract class ControllerAction
 {
-
+    abstract public static function run(ControllerInterface $controller, $params = null);
 }

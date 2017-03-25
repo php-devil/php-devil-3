@@ -89,7 +89,7 @@ abstract class ModulePrototype extends ControllerPrototype
     {
         $controllerName = \Devil::app()->url->nextUrlToController();
         if (null === $controllerName) {
-            $controllerName = '\\app\\controllers\\SiteController';
+            $controllerName = 'Site';
         }
         $actionName = \Devil::app()->url->nextUrlToAction();
         if (null === $actionName) {
