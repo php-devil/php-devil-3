@@ -30,6 +30,4 @@ class Module extends ModulePrototype implements ModuleInterface
 
     }
 
-    
-
 }

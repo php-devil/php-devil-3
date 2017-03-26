@@ -109,6 +109,16 @@ abstract class ModulePrototype extends ControllerPrototype
     }
 
     /**
+     * В качестве свойств фронт-контроллера приложения используются компоненты
+     * @param $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        return $this->callComponent($name);
+    }
+
+    /**
      * Создание компонента по имени
      * @param $componentName
      * @return mixed
@@ -127,11 +137,13 @@ abstract class ModulePrototype extends ControllerPrototype
             if (isset($this->config['components'][$componentName])){
                 $componentConfig = array_merge($componentConfig, $this->config['components'][$componentName]);
             }
-            $componentClassName = isset($componentConfig['class'])
-                ? $componentConfig['class']
-                : isset(static::$defaultComponents[$componentName][0])
+            if (isset($componentConfig['class'])) {
+                $componentClassName = $componentConfig['class'];
+            } else {
+                $componentClassName = isset(static::$defaultComponents[$componentName][0])
                     ? static::$defaultComponents[$componentName][0]
                     : null;
+            }
             unset($this->config['components'][$componentName]);
             if (isset($componentConfig['class']))
             unset($componentConfig['class']);
@@ -147,5 +159,15 @@ abstract class ModulePrototype extends ControllerPrototype
             }
         }
         return $this->components[$componentName];
+    }
+
+    public function execute($commandName, $params = [])
+    {
+        $className = str_replace(' ', '', ucwords(str_replace('-', ' ', $commandName))) . 'Command';
+        $clearCommandName = $this->getNamespace() . "\\console\\" . $className;
+        if (!class_exists($clearCommandName)) $clearCommandName = '\\app\\console\\' . $className;
+        if (!class_exists($clearCommandName)) $clearCommandName = 'PhpDevil\\framework\\console\\commands\\' . $className;
+        if (!class_exists($clearCommandName)) die("\nCommand " . $commandName . " not found");
+        (new $clearCommandName)->execute($params);
     }
 }

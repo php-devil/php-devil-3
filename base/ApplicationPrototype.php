@@ -1,7 +1,7 @@
 <?php
 namespace PhpDevil\framework\base;
 
-abstract class ApplicationPrototype extends ModulePrototype
+abstract class ApplicationPrototype extends ModulePrototype implements ApplicationInterface
 {
     public function loadModule($id)
     {

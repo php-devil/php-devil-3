@@ -36,15 +36,7 @@ class Application extends \PhpDevil\framework\base\Application implements Applic
         'page'  => [PageRenderer::class, PageRendererInterface::class, ['engine' => 'smarty']],
     ];
 
-    /**
-     * В качестве свойств фронт-контроллера приложения используются компоненты
-     * @param $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        return $this->callComponent($name);
-    }
+
 
     public function getViewsLocation()
     {

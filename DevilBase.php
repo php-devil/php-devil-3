@@ -16,6 +16,9 @@ class DevilBase
         '@devil' => __DIR__,
     ];
 
+    /**
+     * @return ApplicationInterface
+     */
     public static function app()
     {
         return self::$_application;
