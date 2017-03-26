@@ -8,25 +8,10 @@ class AbstractMigration
 
     protected $connection = 'main';
 
-    protected static $appliedMigrations = null;
-
-    const UNSIGNED = 1;
-
-    const NOT_NULL = 2;
-
-    const AUTO_INCREMENT = 3;
-
-    public function schema()
+    public function exec($sql, $argv = null)
     {
-        return \Devil::app()->db->getConnection($main)->getSchema();
-    }
-
-    public function apply($time = 0)
-    {
-        if (0 === time) {
-
-        }
-
+        return \Devil::app()->db->getConnection($this->connection)
+            ->prepare($sql)->execute($argv);
     }
 
 

@@ -22,13 +22,28 @@ class MigrateCommand extends AbstractConsoleCommand
         echo "\nContinue with database {$connection}? [Y/N]?\n>";
         $line = fgetc(STDIN);
         if ('y' == $line) {
+            echo "\n\nMIGRATION LOG:";
             $migrations = \Devil::app()->db->getConnection($connection)->getMigrationManager();
             if ($applied = $migrations->getAppliedMigrations()) {
-                // rollback all
-
+                if (!empty($applied)) foreach($applied as $k=>$timestamp) {
+                    $className = '\\app\\migrations\\' . $connection . '\\m_' . $timestamp;
+                    echo "\n - " . $className;
+                    (new $className)->down();
+                    echo " ..OK";
+                    $migrations->reportDownDone($timestamp);
+                }
+            }
+            $dir = \Devil::getPathOf('@app/migrations/' . $connection);
+            foreach(glob($dir . '/m_*.php') as $file) {
+                $timestamp = intval(substr($file, strrpos($file, '/m_')+3));
+                $className = '\\app\\migrations\\' . $connection . '\\m_' . $timestamp;
+                echo "\n + " . $className;
+                (new $className)->up();
+                echo " ..OK";
+                $migrations->reportUpDone($timestamp);
             }
 
-            echo 'done';
+            echo "\n\n\n done";
         }
     }
 }
