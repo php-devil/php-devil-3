@@ -24,6 +24,11 @@ class DevilBase
         return self::$_application;
     }
 
+    public static function loadConfig($fileName)
+    {
+        return require $fileName;
+    }
+
     public static function getPathOf($alias)
     {
         if (strncmp($alias, '@', 1)) return $alias;

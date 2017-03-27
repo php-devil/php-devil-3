@@ -24,15 +24,13 @@ class ${classname} extends AbstractMigration
      * Выполнение миграции
      */
     public function up()
-    {
-
+    {${up_body}
     }
 
     /**
      * Откат миграции
      */
     public function down()
-    {
-
+    {${down_body}
     }
 }
