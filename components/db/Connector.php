@@ -16,6 +16,11 @@ class Connector extends ExtendableConnector
         return $this->connections[$name];
     }
 
+    public function getSchema($name)
+    {
+        return $this->getConnection($name)->getSchema();
+    }
+
     public function __construct($config, $owner = null)
     {
         $this->config = $config;

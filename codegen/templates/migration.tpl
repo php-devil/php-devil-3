@@ -1,5 +1,6 @@
 <?php
 namespace app\migrations\${connection};
+use PhpDevil\orm\generic\dbase\Schema;
 use PhpDevil\framework\models\helpers\AbstractMigration;
 
 /**

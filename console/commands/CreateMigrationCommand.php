@@ -62,31 +62,81 @@ class CreateMigrationCommand extends AbstractConsoleCommand
         $conn = $arr['${connection}'];
         $fileName = $arr['${classname}'] . '.php';
         $template = strtr(file_get_contents(\Devil::getPathOf('@devil/codegen/templates/migration.tpl')), $arr);
-        file_put_contents(\Devil::getPathOf('@app/migrations') . '/' . $conn . '/' . $fileName, $template);
+
+        $fullFileName = \Devil::getPathOf('@app/migrations') . '/' . $conn . '/' . $fileName;
+        if (!is_dir(dirname($fullFileName))) {
+            mkdir(dirname($fullFileName), 0777, true);
+        }
+        file_put_contents($fullFileName, $template);
         echo "\n\n\nMigration created " . \Devil::getPathOf('@app/migrations') . '/' . $conn . '/' . $fileName;
+    }
+
+
+
+    private function _buildKeyString($name, $config)
+    {
+        $query = "->key('{$name}')";
+
+        if (isset($config['type'])) {
+            $query .= "withType('{$configType}')";
+            unset($config['type']);
+        } else {
+            $type = 'default';
+        }
+
+        if ('foreign' == $type) {
+            echo "\nIMPLEMENT FK DEFINITION";
+
+        } else {
+            if (isset($config['columns'])) {
+                $columns = $config['columns'];
+                unset($config['columns']);
+            } else {
+                $columns = $config;
+            }
+            if (is_array($columns)) {
+                $query .= "->onColls(['" . implode("', '", $columns) . "'])";
+            } else {
+                $query .= "->onColls('{$columns}')";
+            }
+        }
+        return $query;
+    }
+
+
+    /**
+     * Построение строки атрибута
+     * @param $name
+     * @param $config
+     */
+    private function _buildAttributeString($name, $config)
+    {
+        $query = "->column('{$name}', '{$config['type']}')";
+        if (!isset($config['nullable']) || $config['nullable']) $query .= ''; else $query .= '->notNull()';
+        if (isset($config['default'])) $query .= "->defaultValue('{$config['default']}'')";
+        if (isset($config['extra'])) $query .= "->extra('{$config['extra']}')";
+        return $query;
     }
 
     private function addModelMigration($class, &$up, &$down)
     {
         if ($table = $class::table()) {
-            if ('main' == $table['connection']) {
+            if ('main' == $table['connection'] && isset($table['name'])) {
                 echo "\n\npreparing migrations for {$class}\n...";
-                $up   .= "\n\t\t" . '$this->createTable(\'' . $table['connection'] . '\', \'' . $table['name'] . '\', [';
-                $attributes = $class::attributes();
-                foreach ($attributes as $k=>$v) {
-                    $up .= "\n\t\t\t\t'{$k}' => ['{$v['type']}', ";
-                    if (is_array($v['flags'])) {
-                        $up .= "['" .implode("', '", array_values($v['flags'])). "'], ";
-                    } else {
-                        $up .= "[], ";
-                    }
-                    if (isset($v['default'])) $up .= "'{$v['default']}'"; else $up .= 'null';
-                    $up .= '],';
-                }
-                $up   .= "\n\t\t\t" . '], [';
-                $up   .= "\n\t\t\t" . ']);';
+                $down .= "\n\t\t\\Devil::app()->db->getSchema('main')->getTable('{$table['name']}')->drop();";
+                $up   .= "\n\t\t\\Devil::app()->db->getSchema('main')->getTable('{$table['name']}')->create()";
 
-                $down .= "\n\t\t" . '$this->dropTable(\'' . $table['connection'] . '\', \'' . $table['name'] . '\');';
+                $attributes = $class::attributes();
+                if (!empty($attributes)) foreach ($attributes as $k=>$v) {
+                    $up .= "\n\t\t\t" . $this->_buildAttributeString($k, $v);
+                }
+
+                if (isset($table['keys']) && !empty($table['keys'])) foreach ($table['keys'] as $k=>$v) {
+                    $up .= "\n\t\t\t" . $this->_buildKeyString($k, $v);
+                }
+
+
+                $up .= "\n\t\t\t->save();";
                 echo "done";
             } else {
                 echo "\n\nWarning: automatic migrations are allowed only for connection main";
