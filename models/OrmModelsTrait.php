@@ -1,7 +1,9 @@
 <?php
 namespace PhpDevil\framework\models;
 
+use PhpDevil\framework\models\attributes\IntegerAttribut;
 use PhpDevil\framework\models\attributes\PasswordAttribute;
+use PhpDevil\framework\models\attributes\StringAttribute;
 use PhpDevil\framework\models\helpers\Instantiator;
 
 trait OrmModelsTrait
@@ -11,8 +13,15 @@ trait OrmModelsTrait
      * @var array
      */
     protected static $extAttributeClassNames = [
+        'integer'  => IntegerAttribut::class,
+        'string'   => StringAttribute::class,
         'password' => PasswordAttribute::class,
     ];
+
+    public static function getID()
+    {
+
+    }
 
     /**
      * Получение класса атрибута по его типу с учетом расширения типов
