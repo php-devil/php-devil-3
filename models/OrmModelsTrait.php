@@ -18,9 +18,9 @@ trait OrmModelsTrait
         'password' => PasswordAttribute::class,
     ];
 
-    public static function getID()
+    public function accessControl($action, $param = [])
     {
-
+        return true;
     }
 
     /**

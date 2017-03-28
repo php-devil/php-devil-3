@@ -16,13 +16,13 @@ class WebController extends Controller implements Renderable
         }
     }
 
-    public function render($view, $attributes = [])
+    public function render($view, $attributes = [], $display = true)
     {
         if (false === strpos($view, '//')) {
             if ($tag = $this->getTagName()) $view = $tag . '/' . $view;
         } else {
             $view = substr($view, 2);
         }
-        \Devil::app()->page->render($this, $view, $attributes, true);
+        return \Devil::app()->page->render($this, $view, $attributes, $display);
     }
 }

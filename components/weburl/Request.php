@@ -9,6 +9,11 @@ class Request
 
     private $uriPointer = 1;
 
+    public function getUsed()
+    {
+        return substr($this->uri, 0, $this->uriPointer);
+    }
+
     public function getUnusedUri()
     {
         return substr($this->uri, $this->uriPointer);

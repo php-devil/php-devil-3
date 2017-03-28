@@ -50,6 +50,11 @@ class WebUrl extends Component implements WebUrlInterface
         }
     }
 
+    public function getUsed()
+    {
+        return $this->request->getUsed();
+    }
+
     public function getNext()
     {
         return $this->request->getNext();

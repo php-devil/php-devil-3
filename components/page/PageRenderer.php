@@ -97,6 +97,7 @@ class PageRenderer extends Component implements PageRendererInterface
         $this->adapter->assignVar('this', $this->renderer);
         if ($displayImmediately) {
             $this->adapter->display($view);
+            return true;
         } else {
             return $this->adapter->fetch($view);
         }

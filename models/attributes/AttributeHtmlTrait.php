@@ -7,7 +7,12 @@ trait AttributeHtmlTrait
 
     public function getID()
     {
-        return get_class($this->getOwner())::getID();
+        return get_class($this->getOwner())::getID() . '_' . $this->name;
+    }
+
+    public function getName()
+    {
+        return get_class($this->getOwner())::getID() . '[' . $this->name . ']';
     }
 
     public function getCaption()

@@ -27,6 +27,15 @@ class FormWidget extends WebWidget
         return $currentSet;
     }
 
+    public function getCommonControls()
+    {
+        if (isset($this->config['controls'])) {
+            return $this->config['controls'];
+        } else {
+            return null;
+        }
+    }
+
     public function hasSections()
     {
         return isset($this->config['sections']);
