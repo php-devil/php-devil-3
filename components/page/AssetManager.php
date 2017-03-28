@@ -27,6 +27,14 @@ class AssetManager
         return $this->js;
     }
 
+    public function getBundle($name)
+    {
+        if (isset($this->registeredNames[$name])) {
+            return $this->registeredNames[$name];
+        } else {
+            return null;
+        }
+    }
 
     private function flushStack()
     {

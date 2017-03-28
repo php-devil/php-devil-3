@@ -10,7 +10,10 @@ class Instantiator
 
     public function load($className, $returnInstance = true)
     {
-        if (!isset($this->collection[$className])) $this->collection[$className]['config'] = \Devil::loadConfig($className::config());
+        if (!isset($this->collection[$className])) {
+            if (is_array($className::config())) $this->collection[$className]['config'] = $className::config();
+            else $this->collection[$className]['config'] = \Devil::loadConfig($className::config());
+        }
         if ($returnInstance) {
             if (!isset($this->collection[$className]['model'])) {
                 $this->collection[$className]['model'] = new $className;

@@ -39,6 +39,12 @@ class PageRenderer extends Component implements PageRendererInterface
         $this->assets->publish($className, $registerName);
     }
 
+    public function getAssetBundle($name)
+    {
+        if (null === $this->assets) $this->assets = new AssetManager;
+        return $this->assets->getBundle($name);
+    }
+
     public function __set($name, $value)
     {
         $this->createAdapter();
