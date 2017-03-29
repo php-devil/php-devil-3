@@ -1,5 +1,5 @@
 <?php
-namespace PhpDevil\franework\containers;
+namespace PhpDevil\framework\containers;
 
 abstract class AbstractContainer
 {

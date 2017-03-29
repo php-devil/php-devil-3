@@ -1,6 +1,7 @@
 <?php
 namespace PhpDevil\framework\components\weburl;
 use PhpDevil\framework\components\Component;
+use PhpDevil\framework\containers\Modules;
 
 /**
  * Class WebUrl
@@ -23,22 +24,17 @@ class WebUrl extends Component implements WebUrlInterface
     public function isModuleRequested()
     {
         $unused = '/' . $this->request->getUnusedUri();
-        if (is_array($this->modulesRequests)) foreach ($this->modulesRequests as $url=>$id) {
-            if (0 === strpos($unused, $url)) {
-                return $id;
-            }
-        }
-        return null;
+        return Modules::container()->getTagByUrl($unused);
     }
 
     public function getModuleUrl($tagName)
     {
-        return $this->modulesUrls[$tagName];
+        return Modules::container()->getUrlByTag($tagName);
     }
 
-    public function useModule($id)
+    public function useModule($tagName)
     {
-        $this->request->setAsUsed($this->modulesUrls[$id]);
+        $this->request->setAsUsed(Modules::container()->getUrlByTag($tagName));
     }
 
     /**
@@ -75,8 +71,6 @@ class WebUrl extends Component implements WebUrlInterface
         return $this->classNameFromUrl();
     }
 
-
-
     /**
      * Получение списка динамически монтируемых модулей.
      * В конфигурации компонента должна быть указана модель, отвечающая за
@@ -90,35 +84,14 @@ class WebUrl extends Component implements WebUrlInterface
     }
 
     /**
-     * Добавление модуля в список известных запросов
-     * @param $configID
-     * @param $mountPoint
-     */
-    private function addModuleRequest($configID, $mountPoint)
-    {
-        $this->modulesUrls[$configID] = $mountPoint;
-        $this->modulesRequests[$mountPoint] = $configID;
-    }
-
-    /**
      * Сбор известных данных о смонтированных точках подключения модулей
      * и контроллеров
      */
     protected function initAfterConstruct()
     {
         $this->request = new Request();
-        if ($modules = $this->owner->getConfig('modules')) {
+        if (!Modules::container()->isEmpty()) {
             $this->getAutoMounting();
-            foreach ($modules as $k=>$conf) {
-                if ('auto' === $conf['mount']) {
-                    //todo: монтировать из модели
-                } elseif (isset($conf['mount']) && !empty($conf['mount'])) {
-                    $this->addModuleRequest($k, $conf['mount']);
-                }
-            }
-        } else {
-            echo 'owner has not modules';
         }
-        krsort($this->modulesRequests);
     }
 }

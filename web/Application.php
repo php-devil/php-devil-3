@@ -39,8 +39,6 @@ class Application extends \PhpDevil\framework\base\Application implements Applic
         'session' => [Session::class,      SessionInterface::class],
     ];
 
-
-
     public function getViewsLocation()
     {
         return \Devil::getPathOf('@app') . '/views';
