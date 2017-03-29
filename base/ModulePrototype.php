@@ -5,6 +5,7 @@ use PhpDevil\framework\components\InvalidInterfaceException;
 use PhpDevil\framework\components\UnknownComponentException;
 use PhpDevil\framework\components\weburl\WebUrl;
 use PhpDevil\framework\components\weburl\WebUrlInterface;
+use PhpDevil\framework\containers\Modules;
 
 abstract class ModulePrototype extends ControllerPrototype
 {
@@ -43,6 +44,16 @@ abstract class ModulePrototype extends ControllerPrototype
     {
         $models = static::models();
         return isset($models[$shortName]);
+    }
+
+    public function getLocation()
+    {
+        return Modules::container()->getLocationByClassName(get_class($this));
+    }
+
+    public function getTagName()
+    {
+        return Modules::container()->getTagByClassName(get_class($this));
     }
 
     /**

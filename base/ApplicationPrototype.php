@@ -1,20 +1,12 @@
 <?php
 namespace PhpDevil\framework\base;
 
+use PhpDevil\framework\containers\Modules;
+
 abstract class ApplicationPrototype extends ModulePrototype implements ApplicationInterface
 {
-    public function loadModule($id)
+    public function loadModule($tagName)
     {
-        if (isset($this->config['modules'][$id])) {
-            $moduleConfig = $this->config['modules'][$id];
-            if (isset($moduleConfig['class'])) {
-                $className = $moduleConfig['class'];
-                unset($moduleConfig['class']);
-                $module = new $className($moduleConfig);
-                $module->setTagName($id);
-                return $module;
-            }
-        }
-        return false;
+        return Modules::container()->load($tagName);
     }
 }

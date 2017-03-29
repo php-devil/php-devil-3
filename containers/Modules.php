@@ -4,6 +4,7 @@ namespace PhpDevil\framework\containers;
 use PhpDevil\framework\base\ModuleInterface;
 use PhpDevil\framework\components\InvalidInterfaceException;
 use PhpDevil\framework\containers\modules\ModuleNotFoundException;
+use PhpDevil\framework\containers\modules\UnknownTagException;
 
 /**
  * Class Modules
@@ -25,6 +26,21 @@ class Modules extends AbstractContainer
     private $requests = [];
 
     private $isResortNeeded = false;
+
+    public function load($className)
+    {
+        $tag = $className;
+        if (isset($this->tags[$className])) $className = $this->tags[$className];
+        if (!isset($this->modules[$className])) {
+            if (isset($this->known[$className])) {
+                $module = new $className($this->known[$className]['config']);
+                $this->modules[$className] = $module;
+            } else {
+                throw new UnknownTagException($tag);
+            }
+        }
+        return $this->modules[$className];
+    }
 
     /**
      * Поиск тега модуля по вхождению в начало переданного адреса
@@ -64,6 +80,36 @@ class Modules extends AbstractContainer
         if (is_object($className)) $className = get_class($className);
         if (isset($this->known[$className]['config']['mount'])) {
             return $this->known[$className]['config']['mount'];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Получение тега по имени класса
+     * @param mixed $className
+     * @return mixed|null
+     */
+    public function getTagByClassName($className)
+    {
+        if (is_object($className)) $className = get_class($className);
+        if (isset($this->known[$className]['tagName'])) {
+            return $this->known[$className]['tagName'];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Получение корневой директории по имени класса
+     * @param mixed $className
+     * @return mixed|null
+     */
+    public function getLocationByClassName($className)
+    {
+        if (is_object($className)) $className = get_class($className);
+        if (isset($this->known[$className]['location'])) {
+            return $this->known[$className]['location'];
         } else {
             return null;
         }
@@ -115,6 +161,7 @@ class Modules extends AbstractContainer
             $this->known[$className] = [
                 'tagName' => $tag,
                 'config'  => $config,
+                'location' => dirname((new \ReflectionClass($className))->getFileName())
             ];
         } else {
             throw new ModuleNotFoundException($tag . ': ' . $className);
