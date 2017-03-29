@@ -1,7 +1,7 @@
 <?php
 namespace PhpDevil\framework\models;
 
-use PhpDevil\framework\models\attributes\IntegerAttribut;
+use PhpDevil\framework\models\attributes\IntegerAttribute;
 use PhpDevil\framework\models\attributes\PasswordAttribute;
 use PhpDevil\framework\models\attributes\StringAttribute;
 use PhpDevil\framework\models\helpers\Instantiator;
@@ -13,7 +13,7 @@ trait OrmModelsTrait
      * @var array
      */
     protected static $extAttributeClassNames = [
-        'integer'  => IntegerAttribut::class,
+        'integer'  => IntegerAttribute::class,
         'string'   => StringAttribute::class,
         'password' => PasswordAttribute::class,
     ];
@@ -21,6 +21,18 @@ trait OrmModelsTrait
     public function accessControl($action, $param = [])
     {
         return true;
+    }
+
+    public function loadFromPost($successMethod = null)
+    {
+        if (isset($_POST[$this->getID()])) {
+            $postVars = $_POST[$this->getID()];
+            $this->setAttrributesValues($postVars);
+            if (null !== $successMethod) {
+                if ($this->validate()) $this->$successMethod();
+            }
+        }
+        return $this;
     }
 
     /**

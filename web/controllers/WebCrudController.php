@@ -8,13 +8,7 @@ class WebCrudController extends WebController
 {
     protected $isAjaxRequest = false;
 
-    private static $uniqueBlockID = 0;
-
-    final public static function getUniqueID()
-    {
-        ++ self::$uniqueBlockID;
-        return 'auto_gen_id_' . self::$uniqueBlockID;
-    }
+    
 
     /**
      * Блок произвольной формы с возможностью перерисовки по ajax запросу
@@ -28,12 +22,21 @@ class WebCrudController extends WebController
             $config['id'] = static::getUniqueID();
         }
         $formView = null;
+
         if ($model->accessControl($action)) {
+
+            if (isset($_POST[$model->getID()])) {
+                $model->attributes = $_POST[$model->getID()];
+                if ($model->validate()) {
+                    $model->save();
+                }
+            }
+
             $formView = new FormWidget($model, $config);
 
-            // todo: post
 
-        } else {
+
+            } else {
             $view = '//widgets/access_denied';
         }
 
@@ -45,11 +48,8 @@ class WebCrudController extends WebController
             'model_block_full_id' => str_replace('\\', '__', get_class($model)),
             'widget_start_params' => json_encode($config),
             'renderMode' => $this->getRenderMode(),
-        ], !$this->isAjaxRequest);
+        ]);
 
-        if ($this->isAjaxRequest) {
-            return $content;
-        }
     }
 
     public function getRenderMode()
