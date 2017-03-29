@@ -5,6 +5,8 @@ use PhpDevil\framework\base\ApplicationInterface;
 use PhpDevil\framework\components\page\PageRenderer;
 use PhpDevil\framework\components\page\PageRendererInterface;
 use PhpDevil\framework\components\page\Renderable;
+use PhpDevil\framework\components\session\Session;
+use PhpDevil\framework\components\session\SessionInterface;
 use PhpDevil\framework\components\weburl\WebUrl;
 use PhpDevil\framework\components\weburl\WebUrlInterface;
 use PhpDevil\framework\components\webuser\User;
@@ -31,9 +33,10 @@ class Application extends \PhpDevil\framework\base\Application implements Applic
      * @var array
      */
     protected static $defaultComponents = [
-        'url'   => [WebUrl::class,       WebUrlInterface::class],
-        'user'  => [User::class,         UserInterface::class],
-        'page'  => [PageRenderer::class, PageRendererInterface::class, ['engine' => 'smarty']],
+        'url'     => [WebUrl::class,       WebUrlInterface::class],
+        'user'    => [User::class,         UserInterface::class],
+        'page'    => [PageRenderer::class, PageRendererInterface::class, ['engine' => 'smarty']],
+        'session' => [Session::class,      SessionInterface::class],
     ];
 
 
