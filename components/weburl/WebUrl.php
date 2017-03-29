@@ -31,6 +31,11 @@ class WebUrl extends Component implements WebUrlInterface
         return null;
     }
 
+    public function getModuleUrl($tagName)
+    {
+        return $this->modulesUrls[$tagName];
+    }
+
     public function useModule($id)
     {
         $this->request->setAsUsed($this->modulesUrls[$id]);

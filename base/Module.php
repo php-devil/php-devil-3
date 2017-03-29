@@ -3,6 +3,11 @@ namespace PhpDevil\framework\base;
 
 class Module extends ModulePrototype implements ModuleInterface
 {
+    public static function backendOptions()
+    {
+        return [];
+    }
+
     /**
      * Проверка разрешений на выполнение модуля
      * @return bool
