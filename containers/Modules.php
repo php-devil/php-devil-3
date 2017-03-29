@@ -42,6 +42,11 @@ class Modules extends AbstractContainer
         return $this->modules[$className];
     }
 
+    public function getAll()
+    {
+        return $this->known;
+    }
+
     /**
      * Поиск тега модуля по вхождению в начало переданного адреса
      * @param $request

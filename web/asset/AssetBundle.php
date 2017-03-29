@@ -17,8 +17,15 @@ abstract class AssetBundle implements AssetBundleInterface
      * Параметры публикаци файлов
      * @return null
      */
-    public static function source() {return null;}
-    public static function dest() {return null;}
+    public static function source()
+    {
+        return dirname((new \ReflectionClass(static::class))->getFileName());
+    }
+
+    public static function dest()
+    {
+        return static::name();
+    }
 
     /**
      * Добавление js в body

@@ -25,10 +25,15 @@ class Smarty_Resource_View extends Smarty_Resource_Custom
         } if (0 === strrpos($name, 'layouts/')) {
             $sourceSearch[] = $applicationViewsPath . '/' . $name . '.tpl';
         }
+
         if (!empty($sourceSearch)) foreach ($sourceSearch as $fileName) if (file_exists($fileName)) {
             $source = file_get_contents($fileName);
             $mtime = filemtime($fileName);
             break;
         }
+
+        /* if (!$mtime) {
+            print_r($sourceSearch);
+        }*/
     }
 }
