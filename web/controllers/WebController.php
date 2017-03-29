@@ -46,8 +46,6 @@ class WebController extends Controller implements Renderable
             if (isset($config['view'])) $view = $config['view'];
             if (!isset($itemID) || $model->findOne($itemID)) {
                 $widget = new FormWidget($model, $config);
-
-
             } else {
                 $view = '//widgets/errors/404';
             }
