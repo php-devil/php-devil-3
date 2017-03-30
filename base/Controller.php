@@ -1,6 +1,6 @@
 <?php
 namespace PhpDevil\framework\base;
-
+use PhpDevil\framework\web\http\HttpException;
 
 abstract class Controller extends ControllerPrototype implements ControllerInterface
 {
@@ -19,6 +19,11 @@ abstract class Controller extends ControllerPrototype implements ControllerInter
     public function errorAction($actionName = null)
     {
 
+    }
+
+    public function loadModel($tagName)
+    {
+        return $this->getOwner()->loadModel($tagName);
     }
 
     final protected function runActionMethod($actionName, $param = [], $realMethod = null)
@@ -54,8 +59,22 @@ abstract class Controller extends ControllerPrototype implements ControllerInter
             if (class_exists($actionClass)) {
                 $this->runActionClass($actionClass, $actionName);
             } else {
-                echo 'from config';
-                print_r(func_get_args());
+                if (false !== strpos($actionName, '.')) {
+                    list($model, $modelAction) = explode('.', $actionName);
+                    $tryMethod = ucfirst($model) . ucfirst($modelAction);
+                    if (method_exists($this, 'action' . $tryMethod)) {
+                        $this->runActionMethod($tryMethod);
+                    } elseif (method_exists($this, $modelAction)) {
+                        if ($this->beforeAction($tryMethod)) {
+                            $this->$modelAction($this->loadModel($model), $param);
+                            $this->afterAction($tryMethod);
+                        } else {
+                            $this->errorAction($tryMethod);
+                        }
+                    } else {
+                        throw new HttpException(HttpException::NOT_FOUND);
+                    }
+                }
             }
         }
     }

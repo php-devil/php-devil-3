@@ -57,6 +57,21 @@ class WebController extends Controller implements Renderable
         return ob_get_clean();
     }
 
+    public function gridWidget(ModelInterface $model, $subAction, $config = null)
+    {
+        $widget = null;
+        if (null === $subAction || $model->accessControl($subAction)) {
+            $view = '//widgets/forms/default';
+            if (isset($config['view'])) $view = $config['view'];
+
+        } else {
+            $view = '//widgets/errors/403';
+        }
+        ob_start();
+        $this->render($view, ['grid' => $widget]);
+        return ob_get_clean();
+    }
+
     public function render($view, $attributes = [], $display = true)
     {
         if (false === strpos($view, '//')) {

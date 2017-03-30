@@ -8,8 +8,6 @@ class WebCrudController extends WebController
 {
     protected $isAjaxRequest = false;
 
-    
-
     /**
      * Блок произвольной формы с возможностью перерисовки по ajax запросу
      * @param ModelInterface $model

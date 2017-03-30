@@ -56,10 +56,23 @@ abstract class ModulePrototype extends ControllerPrototype
      * @param $shortName
      * @return bool
      */
-    public static function hasModel($shortName)
+    public static function hasModel($shortName, $instaitiateOnTrue = false)
     {
         $models = static::models();
-        return isset($models[$shortName]);
+        if (isset($models[$shortName])) {
+            if ($instaitiateOnTrue) {
+                $className = $models[$shortName];
+                return $className::model();
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function loadModel($shortName)
+    {
+        return static::hasModel($shortName, true);
     }
 
     /**

@@ -1,6 +1,5 @@
 <?php
 namespace PhpDevil\framework\base;
-
 use PhpDevil\framework\containers\Modules;
 
 class Module extends ModulePrototype implements ModuleInterface
