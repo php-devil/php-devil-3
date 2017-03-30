@@ -5,7 +5,20 @@ use PhpDevil\framework\containers\Modules;
 
 class Module extends ModulePrototype implements ModuleInterface
 {
-    public static function backendOptions()
+    /**
+     * Конфигурация поведения модуля на фронтенде для метода run()
+     * @return array
+     */
+    public static function frontend()
+    {
+        return [];
+    }
+
+    /**
+     * Конфигурация модуля для бэкенд интерфейса
+     * @return array
+     */
+    public static function backend()
     {
         return [];
     }
@@ -30,13 +43,18 @@ class Module extends ModulePrototype implements ModuleInterface
 
     /**
      * Выполняется вместо run() и afterRun()
-     * если beforeRun() вернул false
+     * если метод beforeRun() вернул false
      */
     public function errorRun()
     {
 
     }
 
+    /**
+     * Инстанс модуля.
+     * Должен быть получен из контейнера модулей.
+     * @return mixed
+     */
     public static function module()
     {
         return Modules::container()->load(static::class);
