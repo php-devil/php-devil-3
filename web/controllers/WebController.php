@@ -6,6 +6,7 @@ use PhpDevil\framework\base\ModulePrototype;
 use PhpDevil\framework\components\page\Renderable;
 use PhpDevil\framework\models\ModelInterface;
 use PhpDevil\framework\web\widgets\FormWidget;
+use PhpDevil\framework\web\widgets\GridWidget;
 
 class WebController extends Controller implements Renderable
 {
@@ -61,9 +62,9 @@ class WebController extends Controller implements Renderable
     {
         $widget = null;
         if (null === $subAction || $model->accessControl($subAction)) {
-            $view = '//widgets/forms/default';
+            $view = '//widgets/grids/default';
             if (isset($config['view'])) $view = $config['view'];
-
+            $widget = new GridWidget($model, $config);
         } else {
             $view = '//widgets/errors/403';
         }

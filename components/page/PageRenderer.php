@@ -1,5 +1,6 @@
 <?php
 namespace PhpDevil\framework\components\page;
+use PhpDevil\framework\base\ModuleInterface;
 use PhpDevil\framework\components\Component;
 use PhpDevil\framework\components\ComponentConfigException;
 use PhpDevil\framework\components\page\smarty\SmartyAdapter;
@@ -32,6 +33,18 @@ class PageRenderer extends Component implements PageRendererInterface
     private static $adaptersAvailable = [
         'smarty' => SmartyAdapter::class,
     ];
+
+    private $searchExtended = null;
+
+    public function extendViewSearch(ModuleInterface $module)
+    {
+        $this->searchExtended = $module;
+    }
+
+    public function getSearchExtension()
+    {
+        return $this->searchExtended;
+    }
 
     public function addAssetBundle($className, $registerName)
     {

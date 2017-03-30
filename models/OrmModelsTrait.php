@@ -58,6 +58,21 @@ trait OrmModelsTrait
         return Instantiator::helper()->getConfigured(static::class, 'attributes');
     }
 
+    public static function relations()
+    {
+        return Instantiator::helper()->getConfigured(static::class, 'relations');
+    }
+
+    public static function rules()
+    {
+        return Instantiator::helper()->getConfigured(static::class, 'rules');
+    }
+
+    public static function labels()
+    {
+        return Instantiator::helper()->getConfigured(static::class, 'labels');
+    }
+
     /**
      * Массив атрибутов модели из конфигурации
      * @return null
