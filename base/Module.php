@@ -1,6 +1,8 @@
 <?php
 namespace PhpDevil\framework\base;
 
+use PhpDevil\framework\containers\Modules;
+
 class Module extends ModulePrototype implements ModuleInterface
 {
     public static function backendOptions()
@@ -35,4 +37,8 @@ class Module extends ModulePrototype implements ModuleInterface
 
     }
 
+    public static function module()
+    {
+        return Modules::container()->load(static::class);
+    }
 }

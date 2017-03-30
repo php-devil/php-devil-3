@@ -1,12 +1,22 @@
 <?php
 namespace PhpDevil\framework\base;
-
 use PhpDevil\framework\components\InvalidInterfaceException;
 use PhpDevil\framework\components\UnknownComponentException;
 use PhpDevil\framework\components\weburl\WebUrl;
 use PhpDevil\framework\components\weburl\WebUrlInterface;
 use PhpDevil\framework\containers\Modules;
+use PhpDevil\framework\helpers\NamesHelper;
+use PhpDevil\framework\web\http\HttpException;
 
+/**
+ * Class ModulePrototype
+ *
+ * Прототип модуля.
+ * Назначение основных свойств, сценарий запуска выполнения модуля по умолчанию для консольного
+ * и веб приложений.
+ *
+ * @package PhpDevil\framework\base
+ */
 abstract class ModulePrototype extends ControllerPrototype
 {
     /**
@@ -36,6 +46,12 @@ abstract class ModulePrototype extends ControllerPrototype
     protected $components = [];
 
     /**
+     * Уже загруженные контроллеры дянного модуля
+     * @var array
+     */
+    private $_loadedControllers = [];
+
+    /**
      * Проверка наличия модели в данном модуле (приложении)
      * @param $shortName
      * @return bool
@@ -46,11 +62,19 @@ abstract class ModulePrototype extends ControllerPrototype
         return isset($models[$shortName]);
     }
 
+    /**
+     * Корневая директория модуля (определяется расположением фронт-контроллера)
+     * @return mixed|null
+     */
     public function getLocation()
     {
         return Modules::container()->getLocationByClassName(get_class($this));
     }
 
+    /**
+     * Тег модуля (ключ в массиве конфигурации приложения)
+     * @return mixed|null
+     */
     public function getTagName()
     {
         return Modules::container()->getTagByClassName(get_class($this));
@@ -73,50 +97,43 @@ abstract class ModulePrototype extends ControllerPrototype
      * @param null $config
      * @return mixed
      */
-    public function loadController($controller, $config = null)
+    public function loadController($controller)
     {
-        $tagName = null;
-        $controllers = static::controllers();
-        if (isset($controllers[$controller])) {
-            $className = $controllers[$controller];
-            $tagName = $controller;
-        } else {
-            $className = $this->getNamespace() . '\\controllers\\' . \Devil::app()->url->classNameFromUrl($controller).'Controller';
+        if (!isset($this->_loadedControllers[$controller])) {
+            $controllers = static::controllers();
+            if (isset($controllers[$controller])) {
+                $className = $controllers[$controller];
+                $tagName = $controller;
+            } else {
+                $className = $this->getNamespace() . '\\controllers\\' . NamesHelper::urlToClass($controller) . 'Controller';
+            }
+            if (class_exists($className)) {
+                $instance = new $className([], $this);
+                $instance->setTagName($controller);
+                $this->_loadedControllers[$controller] = $instance;
+            }
         }
-        $controller = new $className($config, $this);
-        if (null === $tagName) {
-            $tagName = substr($className, intval(strrpos($className, '\\') + 1), - 10);
-        }
-        $controller->setTagName($tagName);
-        return $controller;
+        return $this->_loadedControllers[$controller];
     }
 
     /**
-     * Запуск модуля на выполнение.
+     * Запуск модуля на выполнение (для веб-приложения).
      * Сценарий по умолчанию - первое вхождение урла - контроллер, второе - действие.
      * Если вхождение одно (контроллер) - запускается actionIndex()
      */
     public function run()
     {
-        $controllerName = \Devil::app()->url->nextUrlToController();
-        if (null === $controllerName) {
-            $controllerName = 'Site';
+        if (!($controller = \Devil::app()->url->getNext())) {
+            $controller = 'site';
         }
-        $actionName = \Devil::app()->url->nextUrlToAction();
-        if (null === $actionName) {
-            if ($this instanceof ApplicationInterface) {
-                $actionName = 'Index';
-            } else {
-                $actionName = 'Default';
+        if ($controller = $this->loadController($controller)) {
+            if (!$nexiUrl = \Devil::app()->url->getNext()) {
+                $nextUrl = 'index';
             }
-
+            $controller->performAction(NamesHelper::urlToClass($nextUrl));
+        } else {
+            throw new HttpException(HttpException::NOT_FOUND);
         }
-        $this->runControllerAction($controllerName, $actionName);
-    }
-
-    public function runControllerAction($controller, $action)
-    {
-        $this->loadController($controller)->performAction($action);
     }
 
     /**
@@ -172,6 +189,11 @@ abstract class ModulePrototype extends ControllerPrototype
         return $this->components[$componentName];
     }
 
+    /**
+     * Аналог метода run() для консольного приложения
+     * @param $commandName
+     * @param array $params
+     */
     public function execute($commandName, $params = [])
     {
         $className = str_replace(' ', '', ucwords(str_replace('-', ' ', $commandName))) . 'Command';

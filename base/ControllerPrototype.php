@@ -3,6 +3,11 @@ namespace PhpDevil\framework\base;
 use PhpDevil\framework\common\Configurable;
 use PhpDevil\framework\common\TagNamesTrait;
 
+/**
+ * Class ControllerPrototype
+ * Прототип контроллера приложения или модуля
+ * @package PhpDevil\framework\base
+ */
 abstract class ControllerPrototype extends Configurable
 {
     use TagNamesTrait;
