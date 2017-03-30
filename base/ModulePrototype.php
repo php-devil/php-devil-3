@@ -127,7 +127,7 @@ abstract class ModulePrototype extends ControllerPrototype
             $controller = 'site';
         }
         if ($controller = $this->loadController($controller)) {
-            if (!$nexiUrl = \Devil::app()->url->getNext()) {
+            if (!$nextUrl = \Devil::app()->url->getNext()) {
                 $nextUrl = 'index';
             }
             $controller->performAction(NamesHelper::urlToClass($nextUrl));

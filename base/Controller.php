@@ -55,6 +55,7 @@ abstract class Controller extends ControllerPrototype implements ControllerInter
                 $this->runActionClass($actionClass, $actionName);
             } else {
                 echo 'from config';
+                print_r(func_get_args());
             }
         }
     }
