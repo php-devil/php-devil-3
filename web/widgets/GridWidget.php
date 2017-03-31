@@ -10,36 +10,35 @@ use PhpDevil\framework\models\ModelInterface;
  */
 class GridWidget extends WebWidget
 {
-    protected $query;
+    protected $dataProvider;
 
-    protected $_columns = null;
+    public function getRows()
+    {
+        $rows = $this->dataProvider->getData();
+        
+    }
 
     public function getColumnsNames()
     {
+        $modelClass = $this->dataProvider->getModelClass();
+
         if (null === $this->_columns) {
             if (!isset($this->config['query']['columns'])) {
-                $this->config['query']['columns'] = array_keys($this->model->attributes());
+                $this->config['query']['columns'] = array_keys($modelClass::attributes());
             }
             foreach ($this->config['query']['columns'] as $col) {
-                $this->_columns[$col] = $this->model->labelOf($col);
+                $this->_columns[$col] = $modelClass::labelOf($col);
             }
         }
         return $this->_columns;
     }
 
-    public function getRows()
+    public function __construct($dataProvider, $config)
     {
-        $query = $this->model->select(array_keys($this->getColumnsNames()));
-        if (isset($this->config['query']['orderby'])) {
-            $query->orderBy($this->config['query']['orderby']);
-        } else {
-            $query->orderBy($this->model->getDefaultQueryOrdering());
-        }
-    }
-
-    public function __construct(ModelInterface $model, $config = [])
-    {
-        $this->model = $model;
+        $this->dataProvider  = $dataProvider;
         $this->config = $config;
+
+        echo '<pre>';
+        print_r($this);
     }
 }

@@ -58,13 +58,13 @@ class WebController extends Controller implements Renderable
         return ob_get_clean();
     }
 
-    public function gridWidget(ModelInterface $model, $subAction, $config = null)
+    public function gridWidget($query, $subAction, $config = null)
     {
         $widget = null;
-        if (null === $subAction || $model->accessControl($subAction)) {
+        if (null === $subAction || $query->modelAccessControl($subAction)) {
             $view = '//widgets/grids/default';
             if (isset($config['view'])) $view = $config['view'];
-            $widget = new GridWidget($model, $config);
+            $widget = new GridWidget($query, $config);
         } else {
             $view = '//widgets/errors/403';
         }

@@ -5,6 +5,7 @@ use PhpDevil\framework\models\attributes\IntegerAttribute;
 use PhpDevil\framework\models\attributes\PasswordAttribute;
 use PhpDevil\framework\models\attributes\StringAttribute;
 use PhpDevil\framework\models\helpers\Instantiator;
+use PhpDevil\orm\generic\ConnectionInterface;
 
 trait OrmModelsTrait
 {
@@ -18,9 +19,26 @@ trait OrmModelsTrait
         'password' => PasswordAttribute::class,
     ];
 
-    public function accessControl($action, $param = [])
+    /**
+     * Проверка разрешения выполнения действия на уровне строки или записи.
+     * По умоляанию разрешены все действия над моделью
+     * @param $action
+     * @param null $item
+     * @return bool
+     */
+    public function accessControl($action, $item = null)
     {
         return true;
+    }
+
+    /**
+     * Соединение с базой данных, содержащей связанную таблицу
+     * @return ConnectionInterface|null
+     */
+    public static function db()
+    {
+        $table = static::table();
+        return \Devil::app()->db->getConnection($table['connection']);
     }
 
     public function loadFromPost($successMethod = null)
@@ -74,7 +92,7 @@ trait OrmModelsTrait
     }
 
     /**
-     * Массив атрибутов модели из конфигурации
+     * Параметры связанной с моделью таблицы
      * @return null
      */
     public static function table()

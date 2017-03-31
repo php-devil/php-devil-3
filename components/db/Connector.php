@@ -1,6 +1,7 @@
 <?php
 namespace PhpDevil\framework\components\db;
 use PhpDevil\orm\connector\ExtendableConnector;
+use PhpDevil\orm\generic\ConnectionInterface;
 
 class Connector extends ExtendableConnector
 {
@@ -8,6 +9,10 @@ class Connector extends ExtendableConnector
 
     protected $owner;
 
+    /**
+     * @param $name
+     * @return ConnectionInterface
+     */
     public function getConnection($name)
     {
         if (!isset($this->connections[$name])) {
