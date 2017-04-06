@@ -16,7 +16,7 @@
     "classmap": ["Devil.php"]
   },
   "require": {
-    "php-devil/php-devil-orm": "^0.0.1",
-    "php-devil/php-devil-configurator": "^0.1.0"
+    "php-devil/php-devil-orm": ">=0.1.0",
+    "php-devil/php-devil-configurator": ">=1.0"
   }
 }
