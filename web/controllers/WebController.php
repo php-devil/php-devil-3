@@ -58,13 +58,21 @@ class WebController extends Controller implements Renderable
         return ob_get_clean();
     }
 
-    public function gridWidget($query, $subAction, $config = null)
+    /**
+     * Отображение в виде таблицы
+     *
+     * @param $provider
+     * @param $subAction
+     * @param null $config
+     * @return string
+     */
+    public function gridWidget($provider, $subAction, $config = null)
     {
         $widget = null;
-        if (null === $subAction || $query->modelAccessControl($subAction)) {
+        if (null === $subAction || (($provider->getPrototype())::accessControlStatic($subAction))) {
             $view = '//widgets/grids/default';
             if (isset($config['view'])) $view = $config['view'];
-            $widget = new GridWidget($query, $config);
+            $widget = new GridWidget($provider, $config);
         } else {
             $view = '//widgets/errors/403';
         }

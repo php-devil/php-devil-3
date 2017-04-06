@@ -9,6 +9,7 @@ use PhpDevil\orm\connector\DbConnectorInterface;
  * @package PhpDevil\framework\base
  *
  * @property $db
+ * @property $user
  */
 interface ApplicationInterface
 {

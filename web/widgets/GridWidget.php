@@ -14,13 +14,13 @@ class GridWidget extends WebWidget
 
     public function getRows()
     {
-        $rows = $this->dataProvider->getData();
+        return $this->dataProvider->all();
         
     }
 
     public function getColumnsNames()
     {
-        $modelClass = $this->dataProvider->getModelClass();
+        $modelClass = $this->dataProvider->getPrototype();
 
         if (null === $this->_columns) {
             if (!isset($this->config['query']['columns'])) {
