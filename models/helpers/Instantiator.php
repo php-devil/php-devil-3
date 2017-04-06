@@ -13,6 +13,10 @@ class Instantiator
         if (!isset($this->collection[$className])) {
             if (is_array($className::config())) $this->collection[$className]['config'] = $className::config();
             else $this->collection[$className]['config'] = \Devil::loadConfig($className::config());
+
+            if (isset($this->collection[$className]['config']['attributes'])) foreach ($this->collection[$className]['config']['attributes'] as $name=>$conf) {
+                if (isset($conf['role'])) $this->collection[$className]['config']['roles'][$conf['role']] = $name;
+            }
         }
         if ($returnInstance) {
             if (!isset($this->collection[$className]['model'])) {
@@ -24,10 +28,18 @@ class Instantiator
         }
     }
 
-    public function getConfigured($className, $paramName)
+    public function setRoleName($className, $roleName, $column)
+    {
+        echo '-SRN';
+        if (!isset($this->collection[$className])) $this->load($className, false);
+        $this->collection[$className]['config']['roles'][$roleName] = $column;
+    }
+
+    public function getConfigured($className, $paramName = null)
     {
         if (!isset($this->collection[$className])) $this->load($className, false);
         if (!isset($this->collection[$className])) die('Cant load ' . $className);
+        if (null === $paramName) return $this->collection[$className]['config'];
         if (isset($this->collection[$className]['config'][$paramName])) {
             return $this->collection[$className]['config'][$paramName];
         } else {

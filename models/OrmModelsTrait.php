@@ -91,6 +91,16 @@ trait OrmModelsTrait
         return Instantiator::helper()->getConfigured(static::class, 'labels');
     }
 
+    public static function setRoleField($role, $column)
+    {
+        Instantiator::helper()->setRoleName(static::class, $role, $column);
+    }
+
+    public static function roles()
+    {
+        return Instantiator::helper()->getConfigured(static::class, 'roles');
+    }
+
     /**
      * Параметры связанной с моделью таблицы
      * @return null
