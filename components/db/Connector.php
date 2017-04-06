@@ -3,7 +3,7 @@ namespace PhpDevil\framework\components\db;
 use PhpDevil\orm\connector\ExtendableConnector;
 use PhpDevil\orm\generic\ConnectionInterface;
 
-class Connector extends ExtendableConnector
+class Connector
 {
     protected $config;
 
@@ -11,24 +11,17 @@ class Connector extends ExtendableConnector
 
     /**
      * @param $name
-     * @return ConnectionInterface
+     * @return mixed
      */
     public function getConnection($name)
     {
-        if (!isset($this->connections[$name])) {
-            $this->createConnection($name, $this->config[$name]);
-        }
-        return $this->connections[$name];
-    }
-
-    public function getSchema($name)
-    {
-        return $this->getConnection($name)->getSchema();
+        return \PhpDevil\ORM\Connector::getInstance()->getConnection($name);
     }
 
     public function __construct($config, $owner = null)
     {
         $this->config = $config;
         $this->owner = $owner;
+        foreach ($config as $name=>$conf) \PhpDevil\ORM\Connector::getInstance()->createConnection($name, $conf);
     }
 }

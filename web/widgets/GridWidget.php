@@ -12,10 +12,19 @@ class GridWidget extends WebWidget
 {
     protected $dataProvider;
 
+    protected $sortRanges = null;
+
+    public function appendRowControls($row)
+    {
+        if (isset($this->config['manualSort']) && $this->config['manualSort']) {
+            $row->checkForManualSort($this->sortRanges, $this->dataProvider->getQuery()->getWhere());
+        }
+    }
+
     public function getRows()
     {
-        return $this->dataProvider->all();
-        
+
+        return $this->dataProvider->all([$this, 'appendRowControls']);
     }
 
     public function getColumnsNames()
@@ -23,10 +32,10 @@ class GridWidget extends WebWidget
         $modelClass = $this->dataProvider->getPrototype();
 
         if (null === $this->_columns) {
-            if (!isset($this->config['query']['columns'])) {
-                $this->config['query']['columns'] = array_keys($modelClass::attributes());
+            if (!isset($this->config['columns'])) {
+                $this->config['columns'] = array_keys($modelClass::attributes());
             }
-            foreach ($this->config['query']['columns'] as $col) {
+            foreach ($this->config['columns'] as $col) {
                 $this->_columns[$col] = $modelClass::labelOf($col);
             }
         }
@@ -37,8 +46,5 @@ class GridWidget extends WebWidget
     {
         $this->dataProvider  = $dataProvider;
         $this->config = $config;
-
-        echo '<pre>';
-        print_r($this);
     }
 }

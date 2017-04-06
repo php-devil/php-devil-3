@@ -13,4 +13,9 @@ class NestedSetsTree extends StdTable
     {
         return NestedSets::class;
     }
+
+    public function getLevel()
+    {
+        return intval($this->getRoleValue('tree-level'));
+    }
 }
