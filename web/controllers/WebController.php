@@ -10,6 +10,8 @@ use PhpDevil\framework\web\widgets\GridWidget;
 
 class WebController extends Controller implements Renderable
 {
+    public $pageHeading = '';
+
     /**
      * Счетчик генератора уникальных ID блоков страницы
      * @var int
@@ -59,6 +61,11 @@ class WebController extends Controller implements Renderable
             } else {
                 $model = $modelClass::findByPK($config['entityID']);
             }
+
+            if (isset($config['autosave']) && 'post' === $config['autosave']) {
+                $model->saveFromPost();
+            }
+
             if ($model) {
                 $widget = new FormWidget($model, $config);
             } else {

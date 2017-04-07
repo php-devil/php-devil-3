@@ -1,8 +1,8 @@
 <?php
 namespace PhpDevil\framework\models;
 use PhpDevil\framework\models\ext\AccessControlExtension;
-use PhpDevil\framework\models\ext\AttributeTemplateExtension;
 use PhpDevil\framework\models\ext\AttributeTypesExtension;
+use PhpDevil\framework\models\ext\AutoSaveExtension;
 use PhpDevil\framework\models\ext\PropertyExtension;
 use PhpDevil\ORM\models\ActiveRecord;
 use PhpDevil\ORM\QueryBuilder\components\QueryExpression;
@@ -12,7 +12,7 @@ class StdTable extends ActiveRecord
     use AttributeTypesExtension; // - расширение типов данных ОРМ
     use AccessControlExtension;  // - расширение для контроля доступа к данным
     use PropertyExtension;
-    use AttributeTemplateExtension;
+    use AutoSaveExtension;
 
     public static function db()
     {
