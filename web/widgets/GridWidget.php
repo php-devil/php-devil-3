@@ -14,6 +14,24 @@ class GridWidget extends WebWidget
 
     protected $sortRanges = null;
 
+    public function getMaxLevel()
+    {
+        if (isset($this->sortRanges['total']['max_level'])) {
+            return $this->sortRanges['total']['max_level'];
+        } else {
+            return 0;
+        }
+    }
+
+    public function getHeadColspan()
+    {
+        if (isset($this->config['manualSort']) && $this->config['manualSort']) {
+            return 3;
+        } else {
+            return 1;
+        }
+    }
+
     public function appendRowControls($row)
     {
         if (isset($this->config['manualSort']) && $this->config['manualSort']) {
@@ -21,9 +39,34 @@ class GridWidget extends WebWidget
         }
     }
 
+    public function countControls()
+    {
+        if (isset($this->config['rowControls'])) {
+            return count($this->config['rowControls']);
+        } else {
+            return 0;
+        }
+    }
+
+    public function getRowControls($row)
+    {
+        if (isset($this->config['rowControls'])) {
+            $controls = $this->config['rowControls'];
+            foreach ($controls as $k=>$v) {
+                if ($row->accessControl($v['action'])) {
+                    $controls[$k]['href'] = $this->config['baseUrl'] . '/'. $row->fromTemplate($v['href']);
+                    $controls[$k]['isAllowed'] = true;
+                } else {
+                    $controls[$k]['isAllowed'] = false;
+                }
+            }
+            return $controls;
+        }
+        return [];
+    }
+
     public function getRows()
     {
-
         return $this->dataProvider->all([$this, 'appendRowControls']);
     }
 

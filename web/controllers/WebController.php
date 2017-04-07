@@ -39,13 +39,27 @@ class WebController extends Controller implements Renderable
         }
     }
 
-    public function formWidget(ModelInterface $model, $subAction, $itemID, $config = null)
+    /**
+     * Дефолтный виджет формы
+     *
+     * @param $modelClass
+     * @param $subAction
+     * @param array $config
+     * @param bool $isNew
+     * @return string
+     */
+    public function formWidget($modelClass, $subAction, $config = [], $isNew = false)
     {
         $widget = null;
-        if (null === $subAction || $model->accessControl($subAction)) {
+        if (null === $subAction || $modelClass::accessControlStatic($subAction)) {
             $view = '//widgets/forms/default';
             if (isset($config['view'])) $view = $config['view'];
-            if (!isset($itemID) || $model->findOne($itemID)) {
+            if ($isNew) {
+                $model = $modelClass::model();
+            } else {
+                $model = $modelClass::findByPK($config['entityID']);
+            }
+            if ($model) {
                 $widget = new FormWidget($model, $config);
             } else {
                 $view = '//widgets/errors/404';

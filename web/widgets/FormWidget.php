@@ -1,6 +1,5 @@
 <?php
 namespace PhpDevil\framework\web\widgets;
-use PhpDevil\framework\models\ModelInterface;
 use PhpDevil\framework\web\WebWidget;
 
 /**
@@ -21,16 +20,22 @@ class FormWidget extends WebWidget
             if ($this->hasSections()) die('WHEN USING SECTION FORM NEED TO SPECIFY SECTION');
             if (!isset($this->config['attributes'])) $this->config['attributes'] = array_keys(get_class($this->model)::attributes());
             foreach ($this->config['attributes'] as $attr) {
-                $currentSet[$attr] = $this->model->$attr;
+                $currentSet[$attr] = $this->attr($attr);
             }
         }
         return $currentSet;
     }
 
+    public function attr($attr)
+    {
+        return $this->model->$attr;
+    }
+
+
     public function getCommonControls()
     {
-        if (isset($this->config['controls'])) {
-            return $this->config['controls'];
+        if (isset($this->config['formControls'])) {
+            return $this->config['formControls'];
         } else {
             return null;
         }
@@ -41,7 +46,12 @@ class FormWidget extends WebWidget
         return isset($this->config['sections']);
     }
 
-    public function __construct(ModelInterface $model, $config = [])
+    public function getSections()
+    {
+        return $this->config['sections'];
+    }
+
+    public function __construct($model, $config = [], $isNew = false)
     {
         $this->model = $model;
         $this->config = $config;
