@@ -10,7 +10,7 @@ trait AutoSaveExtension
             unset($_POST[$id][$this->getRoleValue('id')]);
             $this->setAttributes($_POST[$id]);
             if ($this->validate()) {
-                // validation OK, saving model
+                $this->save();
             } else {
                 // validation contains errors
             }
