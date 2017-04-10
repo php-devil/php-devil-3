@@ -41,6 +41,20 @@ class WebController extends Controller implements Renderable
         }
     }
 
+    public function confirmWidget($modelClass, $subAction, $config = [])
+    {
+        $widget = null;
+        if (isset($config['entityID']) && ($model = $modelClass::findByPK($config['entityID']))) {
+
+            $view = '//widgets/modal/confirm';
+        } else {
+            $view = '//widgets/errors/404';
+        }
+        ob_start();
+        $this->render($view, ['confirm' => $widget]);
+        return ob_get_clean();
+    }
+
     /**
      * Дефолтный виджет формы
      *
