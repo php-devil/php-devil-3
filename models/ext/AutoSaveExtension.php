@@ -6,9 +6,9 @@ trait AutoSaveExtension
     public function saveFromPost()
     {
         $id = str_replace('\\', '_', get_class($this));
-        if (isset($_POST[$id])) {
-            unset($_POST[$id][$this->getRoleValue('id')]);
-            $this->setAttributes($_POST[$id]);
+        if ($data = \Devil::app()->post->getOnce($id)) {
+            unset($data[$this->getRoleValue('id')]);
+            $this->setAttributes($data);
             if ($this->validate()) {
                 $this->save();
             } else {

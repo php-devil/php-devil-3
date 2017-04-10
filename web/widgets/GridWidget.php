@@ -48,6 +48,18 @@ class GridWidget extends WebWidget
         }
     }
 
+    public function getCommonControls()
+    {
+        if (isset($this->config['gridControls'])) {
+            foreach ($this->config['gridControls'] as $k=>$v) {
+                if (isset($v['href'])) $this->config['gridControls'][$k]['href'] = $this->config['baseUrl'] . '/' . $v['href'];
+            }
+            return $this->config['gridControls'];
+        } else {
+            return null;
+        }
+    }
+
     public function getRowControls($row)
     {
         if (isset($this->config['rowControls'])) {
