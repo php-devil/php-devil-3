@@ -40,12 +40,14 @@ class AssetManager
     {
         if (!empty($this->stackBundles)) foreach ($this->stackBundles as $class=>$name) {
             if ($css = $class::css()) foreach ($css as $link) {
-                if (0 === strpos($link, '//')) $this->css[] = $link;
-                else $this->css[] = [$name, $link];
+                if (0 === strpos($link, '//')) $reallink = $link;
+                else $reallink = [$name, $link];
+                if (!in_array($reallink, $this->css)) $this->css[] = $reallink;
             }
             if ($js = $class::js()) foreach ($js as $link) {
-                if (0 === strpos($link, '//')) $this->js[] = $link;
-                else $this->js[] = [$name, $link];
+                if (0 === strpos($link, '//')) $reallink = $link;
+                else $reallink = [$name, $link];
+                if (!in_array($reallink, $this->js)) $this->js[] = $reallink;
             }
             $this->registeredBundles[$class] = $name;
             // todo: срубать совпадение имен
