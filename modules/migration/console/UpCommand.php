@@ -1,6 +1,5 @@
 <?php
 namespace PhpDevil\framework\modules\migration\console;
-use PhpDevil\framework\modules\migration\components\MigrationInterface;
 
 class UpCommand extends ApplyCommand
 {
