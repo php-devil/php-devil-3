@@ -5,6 +5,7 @@ use PhpDevil\framework\base\Controller;
 use PhpDevil\framework\base\ModulePrototype;
 use PhpDevil\framework\components\page\Renderable;
 use PhpDevil\framework\models\ModelInterface;
+use PhpDevil\framework\web\widgets\ConfirmWidget;
 use PhpDevil\framework\web\widgets\FormWidget;
 use PhpDevil\framework\web\widgets\GridWidget;
 
@@ -45,7 +46,7 @@ class WebController extends Controller implements Renderable
     {
         $widget = null;
         if (isset($config['entityID']) && ($model = $modelClass::findByPK($config['entityID']))) {
-
+            $widget = new ConfirmWidget($model, $subAction, $config);
             $view = '//widgets/modal/confirm';
         } else {
             $view = '//widgets/errors/404';

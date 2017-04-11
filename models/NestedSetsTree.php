@@ -15,6 +15,20 @@ class NestedSetsTree extends StdTable
         return NestedSets::class;
     }
 
+    /**
+     * Првоерка разрешения выполнения действий
+     * @param $action
+     * @return bool
+     */
+    public function accessControl($action)
+    {
+        if ('delete' == $action) {
+            return (1 == ($this->getRoleValue('tree-right') - $this->getRoleValue('tree-left')));
+        } else {
+            return true;
+        }
+    }
+
     public function getLevel()
     {
         return intval($this->getRoleValue('tree-level'));
