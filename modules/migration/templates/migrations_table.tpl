@@ -1,19 +1,18 @@
 <?php
 namespace app\migrations\${connection};
-use PhpDevil\orm\generic\dbase\Schema;
-use PhpDevil\framework\models\helpers\AbstractMigration;
+use PhpDevil\framework\modules\migration\components\AbstractMigration;
 
 /**
  * Миграция структуры БД.
- * создана: ${time}
+ * создана: 0
  */
-class ${classname} extends AbstractMigration
+class m_0 extends AbstractMigration
 {
     /**
      * Время создания миграции
      * @var int
      */
-    protected $mtime = ${time};
+    protected $mtime = 0;
 
     /**
      * Имя соединения, для которого применяется миграция
@@ -25,13 +24,19 @@ class ${classname} extends AbstractMigration
      * Выполнение миграции
      */
     public function up()
-    {${up_body}
+    {
+        $this->createTable('${connection}', 'phpdevil_migrations')
+            ->column('id', 'int(10) unsigned')
+            ->column('migration_date', 'timestamp')
+            ->key('primary')->onColls('id')
+            ->execute();
     }
 
     /**
      * Откат миграции
      */
     public function down()
-    {${down_body}
+    {
+        $this->dropTable('${connection}', 'phpdevil_migrations')->execute();
     }
 }

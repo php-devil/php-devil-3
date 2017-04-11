@@ -21,22 +21,24 @@ class CreateCommand extends AbstractConsoleCommand
      * @var array
      */
     protected $templateVariables = [
-
+        //todo: define default values
     ];
 
     /**
      * Парсинг шаблона кода миграции с подстановкой реальных данных
      * @param array $variables
+     * @param $template
      * @return string
      */
-    protected function parseTemplate($variables = [])
+    protected function parseTemplate($variables = [], $template = null)
     {
+        if (null === $template) $template = 'migration';
         $replacements = array_merge($variables, $this->templateVariables);
-        return strtr(file_get_contents(dirname(__DIR__) . '/templates/migration.tpl'), $replacements);
+        return strtr(file_get_contents(dirname(__DIR__) . '/templates/' . $template . '.tpl'), $replacements);
     }
 
     /**
-     * Создание миграции
+     * Создание миграции для модуля
      * @param null $params
      */
     public function execute($params = null)
@@ -65,7 +67,37 @@ class CreateCommand extends AbstractConsoleCommand
             }
 
         }
+        $real = Dependencies::flush();
+        foreach ($real as $connection=>$commands) {
+            $this->save($connection, $commands);
+        }
+    }
 
-        Dependencies::flush();
+    /**
+     * Сохранение миграции
+     * @param $connection
+     * @param $commands
+     */
+    protected function save($connection, $commands)
+    {
+        $path = \Devil::getPathOf('@app/migrations/' . $connection);
+        if (!file_exists($path . '/m_0.php')) $this->createMigrationTable($connection);
+        $replace['${time}'] = $time = date('YmdHis');
+        $replace['${connection}'] = $connection;
+        $replace['${classname}'] = $class = 'm_' . $time;
+        $replace['${up_body}'] = implode("\n", $commands['up']);
+        $replace['${down_body}'] = implode("\n", array_reverse($commands['down']));
+        file_put_contents($path . '/' . $class . '.php', $this->parseTemplate($replace));
+    }
+
+    /**
+     * Нулевая минграция - создание/удаление таблицы логирования выполненных миграций
+     * @param $connection
+     */
+    protected function createMigrationTable($connection)
+    {
+        $path = \Devil::getPathOf('@app/migrations/' . $connection);
+        if (!is_dir($path)) mkdir($path, 0777, true);
+        file_put_contents($path . '/m_0.php', $this->parseTemplate(['${connection}'=>$connection], 'migrations_table'));
     }
 }
