@@ -57,7 +57,7 @@ class TemporaryMigration
 
     public function getCreateMigration()
     {
-        $sql = "\n\t\t" . '$this->createTable(' . "'{$this->connection}', '{$this->tableName}'" . ')';
+        $sql = "\n\t\t" . '$this->createTable(' . "'{$this->tableName}'" . ')';
         foreach ($this->columns as $column) $sql .=  "\n\t\t\t" . $column;
         foreach ($this->keys as $column)    $sql .=  "\n\t\t\t" . $column;
         $sql .= "\n\t\t\t" . $this->extras . '->execute();';
@@ -66,7 +66,7 @@ class TemporaryMigration
 
     public function getDropMigration()
     {
-        return "\n\t\t" . '$this->dropTable(' . "'{$this->connection}', '{$this->tableName}'" . ')->execute();';
+        return "\n\t\t" . '$this->dropTable(' . "'{$this->tableName}'" . ')->execute();';
     }
 
     protected function createKeys($arr)

@@ -25,8 +25,8 @@ class m_0 extends AbstractMigration
      */
     public function up()
     {
-        $this->createTable('${connection}', 'phpdevil_migrations')
-            ->column('id', 'int(10) unsigned')
+        $this->createTable('phpdevil_migrations')
+            ->column('id', 'char(14)')
             ->column('migration_date', 'timestamp')
             ->key('primary')->onColls('id')
             ->execute();
@@ -37,6 +37,6 @@ class m_0 extends AbstractMigration
      */
     public function down()
     {
-        $this->dropTable('${connection}', 'phpdevil_migrations')->execute();
+        $this->dropTable('phpdevil_migrations')->execute();
     }
 }
