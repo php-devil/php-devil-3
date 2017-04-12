@@ -10,96 +10,44 @@ use PhpDevil\framework\models\ModelInterface;
  */
 class GridWidget extends WebWidget
 {
-    protected $dataProvider;
+    protected $columnsVisible = null;
 
-    protected $sortRanges = null;
+    protected $inlineControlCount = null;
 
-    public function getMaxLevel()
+    protected function prepareVisibleColumns()
     {
-        if (isset($this->sortRanges['total']['max_level'])) {
-            return $this->sortRanges['total']['max_level'];
-        } else {
-            return 0;
-        }
-    }
-
-    public function getHeadColspan()
-    {
-        if (isset($this->config['manualSort']) && $this->config['manualSort']) {
-            return 3;
-        } else {
-            return 1;
-        }
-    }
-
-    public function appendRowControls($row)
-    {
-        if (isset($this->config['manualSort']) && $this->config['manualSort']) {
-            $row->checkForManualSort($this->sortRanges, $this->dataProvider->getQuery()->getWhere());
+        if (null === $this->columnsVisible) {
+            $prototype = get_class($this->provider->getPrototype());
+            if (!isset($this->config['columns'])) {
+                $this->config['columns'] = $prototype::attributes();
+            }
+            foreach ($this->config['columns'] as $col) {
+                $this->columnsVisible[$col] = $prototype::labelOf($col);
+            }
         }
     }
 
     public function countControls()
     {
-        if (isset($this->config['rowControls'])) {
-            return count($this->config['rowControls']);
-        } else {
-            return 0;
+        if (null === $this->inlineControlCount) {
+            if (!isset($this->config['rowControls'])) $this->inlineControlCount = 0;
+            else $this->inlineControlCount = count($this->config['rowControls']);
         }
-    }
-
-    public function getCommonControls()
-    {
-        if (isset($this->config['gridControls'])) {
-            foreach ($this->config['gridControls'] as $k=>$v) {
-                if (isset($v['href'])) $this->config['gridControls'][$k]['href'] = $this->config['baseUrl'] . '/' . $v['href'];
-            }
-            return $this->config['gridControls'];
-        } else {
-            return null;
-        }
-    }
-
-    public function getRowControls($row)
-    {
-        if (isset($this->config['rowControls'])) {
-            $controls = $this->config['rowControls'];
-            foreach ($controls as $k=>$v) {
-                if ($row->accessControl($v['action'])) {
-                    $controls[$k]['href'] = $this->config['baseUrl'] . '/'. $row->fromTemplate($v['href']);
-                    $controls[$k]['isAllowed'] = true;
-                } else {
-                    $controls[$k]['isAllowed'] = false;
-                }
-            }
-            return $controls;
-        }
-        return [];
+        return $this->inlineControlCount;
     }
 
     public function getRows()
     {
-        return $this->dataProvider->all([$this, 'appendRowControls']);
+        return [];
+    }
+
+    public function getCommonControls()
+    {
+        
     }
 
     public function getColumnsNames()
     {
-        $modelClass = $this->dataProvider->getPrototype();
-
-        if (null === $this->_columns) {
-            if (!isset($this->config['columns'])) {
-                $this->config['columns'] = array_keys($modelClass::attributes());
-            }
-            foreach ($this->config['columns'] as $col) {
-                $this->_columns[$col] = $modelClass::labelOf($col);
-            }
-        }
-        return $this->_columns;
-    }
-
-    public function __construct($dataProvider, $config)
-    {
-        $this->dataProvider  = $dataProvider;
-        $this->config = $config;
+        $this->prepareVisibleColumns();
     }
 }

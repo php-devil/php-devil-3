@@ -105,15 +105,11 @@ class WebController extends Controller implements Renderable
     public function gridWidget($provider, $subAction, $config = null)
     {
         $widget = null;
-        if (null === $subAction || (($provider->getPrototype())::accessControlStatic($subAction))) {
-            $view = '//widgets/grids/default';
-            if (isset($config['view'])) $view = $config['view'];
-            $widget = new GridWidget($provider, $config);
-        } else {
-            $view = '//widgets/errors/403';
-        }
+        $view = '//widgets/grids/default';
+        if (isset($config['view'])) $view = $config['view'];
+
         ob_start();
-        $this->render($view, ['grid' => $widget]);
+        $this->render($view, ['grid' => new GridWidget($provider, $config)]);
         return ob_get_clean();
     }
 
