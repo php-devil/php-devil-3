@@ -4,8 +4,11 @@ namespace PhpDevil\framework\modules\migration\components\tables;
 abstract class AbstractTable
 {
     const MODE_CREATE = 1;
-
     const MODE_DROP = 2;
+
+    const CONSTRAINT_DEFAULT  = 1;
+    const CONSTRAINT_RESTRICT = 2;
+    const CONSTRAINT_CASCADE  = 3;
 
     protected $connection;
 
@@ -29,6 +32,7 @@ abstract class AbstractTable
 
     public function execute()
     {
+        $this->saveColumn();
         $query = null;
 
         switch ($this->mode) {
@@ -41,7 +45,13 @@ abstract class AbstractTable
                 break;
         }
 
-        if ($query) $this->connection->prepare($query)->execute();
+        if ($query) {
+            try {
+                $this->connection->prepare($query)->execute();
+            } catch (\PDOException $e) {
+                echo "\n\nPDO FATAL ERROR: " . $e->getCode() . "\n" . $e->getMessage() . "\n\n" . $query . "\n";
+            }
+        }
     }
 
     private function saveColumn()
@@ -50,6 +60,7 @@ abstract class AbstractTable
             $this->columns[$this->_currentColumn['name']] = $this->_currentColumn['param'];
             $this->_currentColumn = null;
         }
+
         if (!empty($this->_currentKey)) {
             $this->keys[$this->_currentKey['name']] = $this->_currentKey['param'];
             $this->_currentKey = null;
@@ -101,6 +112,23 @@ abstract class AbstractTable
     final public function withType($type)
     {
         $this->_currentKey['param']['type'] = $type;
+        return $this;
+    }
+
+    final public function reference($table, $column)
+    {
+        $this->_currentKey['param']['ref_table'] = $table;
+        $this->_currentKey['param']['ref_columns'] = $column;
+        $this->constraint();
+        return $this;
+    }
+
+    final public function constraint($delete = self::CONSTRAINT_DEFAULT, $update = self::CONSTRAINT_DEFAULT)
+    {
+        $this->_currentKey['param']['constraint'] = [
+            'update' => $update,
+            'delete' => $delete,
+        ];
         return $this;
     }
 

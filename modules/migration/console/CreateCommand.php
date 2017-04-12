@@ -57,7 +57,8 @@ class CreateCommand extends AbstractConsoleCommand
                             die ("\n\nFatal error: module " . $params[0] . " has not model " . $params[1]);
                         }
                     } else {
-                        foreach ($models as $model) {
+                        foreach ($models as $n=>$model) {
+                            echo "\n\t-model $n -class $model";
                             Dependencies::push($model);
                         }
                     }

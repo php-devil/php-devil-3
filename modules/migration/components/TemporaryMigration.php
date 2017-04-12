@@ -74,9 +74,15 @@ class TemporaryMigration
         foreach ($arr as $name=>$config) {
             $raw = "->key('{$name}')";
             if (isset($config['type'])) {
-                if ('foreign' === $config['type'] || 'self' !== $config['model']) {
-                    Dependencies::push($config['model']);
-                    // todo: ->reference()->constr()
+
+                if ('foreign' === $config['type'] && 'self' !== $config['model']) {
+                    $refClass = $config['model'];
+                    $here = $config['here'];
+                    $there = $config['there'];
+                    Dependencies::push($refClass);
+                    $raw .= "->withType('foreign')->onColls('{$here}')->reference('" .$refClass::tableName(). "', '{$there}')";
+                    $this->keys[$name] = $raw;
+                    continue;
                 }
                 $raw .= "->withType('{$config['type']}')";
                 unset($config['type']);
@@ -90,7 +96,11 @@ class TemporaryMigration
             }
 
             if (is_array($columns)) {
-                $raw .= "->onColls(['" . implode("', '", $columns) . "'])";
+                if (1 == count($columns)) {
+                    $raw .= "->onColls('{$columns[0]}')";
+                } else {
+                    $raw .= "->onColls(['" . implode("', '", $columns) . "'])";
+                }
             } else {
                 $raw .= "->onColls('{$columns}')";
             }
@@ -112,6 +122,7 @@ class TemporaryMigration
 
     public function __construct($modelClassName)
     {
+        echo "\n\t-create temp from " . $modelClassName;
         $this->keyClass = $modelClassName;
         $config = $modelClassName::getConfig();
         if (isset($config['table'])) {
