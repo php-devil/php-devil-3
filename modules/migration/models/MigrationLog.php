@@ -23,7 +23,8 @@ class MigrationLog
     public function completeUp(MigrationInterface $migration)
     {
         $query = (new InsertQueryBuilder())->into('phpdevil_migrations')->set([
-            'id' => $migration->getTime()
+            'id' => $migration->getTime(),
+            'comment' => $migration->comment(),
         ]);
 
         $parsed = $query->parse($this->connection->getDialect());

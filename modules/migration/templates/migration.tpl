@@ -21,6 +21,15 @@ class ${classname} extends AbstractMigration
     protected $connection = '${connection}';
 
     /**
+     * Комментарий к миграции для логирования
+     * @return string
+     */
+    public function comment()
+    {
+        return 'Автоматически сгенерированная миграция';
+    }
+
+    /**
      * Выполнение миграции
      */
     public function up()

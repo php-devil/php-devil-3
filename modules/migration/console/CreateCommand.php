@@ -45,6 +45,7 @@ class CreateCommand extends AbstractConsoleCommand
     {
         echo "\nPHPDevil create-migration tool";
         if (!empty($params[0])) {
+
             if ('app' === $params[0]) {
                 $module = \Devil::app();
             } else {
@@ -66,12 +67,16 @@ class CreateCommand extends AbstractConsoleCommand
                     die ("\n\nFatal error: module " . $params[0] . " is unknown");
                 }
             }
+            $real = Dependencies::flush();
+            foreach ($real as $connection=>$commands) {
+                $this->save($connection, $commands);
+            }
 
+        } else {
+            echo "\nCreating custom migration";
+            $this->save('main', ['up'=>[], 'down'=>[]]);
         }
-        $real = Dependencies::flush();
-        foreach ($real as $connection=>$commands) {
-            $this->save($connection, $commands);
-        }
+
     }
 
     /**

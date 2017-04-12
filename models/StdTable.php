@@ -21,17 +21,7 @@ class StdTable extends ActiveRecord
 
     protected function createSortableBuffer(&$buffer)
     {
-        $query = static::query()
-            ->select([
-                'parent' => $this->getRoleField('tree-parent'),
-                'min_value' => QueryExpression::min($this->getRoleField('tree-left')),
-                'max_value' => QueryExpression::max($this->getRoleField('tree-left'))
-            ])->groupBy([$this->getRoleField('tree-parent')])->execute();
 
-        while ($row = $query->fetch()) {
-            print_r($row);
-        }
-        die;
     }
 
     public function checkForManualSort(&$buffer)

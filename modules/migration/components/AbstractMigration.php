@@ -18,6 +18,11 @@ abstract class AbstractMigration implements MigrationInterface
      */
     protected $connection = 'main';
 
+    public function comment()
+    {
+        return '';
+    }
+
     public function getTime()
     {
         return $this->mtime;

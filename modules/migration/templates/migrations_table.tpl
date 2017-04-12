@@ -21,6 +21,15 @@ class m_0 extends AbstractMigration
     protected $connection = '${connection}';
 
     /**
+     * Комментарий к миграции для логирования
+     * @return string
+     */
+    public function comment()
+    {
+        return 'Создание таблицы лога миграций';
+    }
+
+    /**
      * Выполнение миграции
      */
     public function up()
@@ -28,6 +37,7 @@ class m_0 extends AbstractMigration
         $this->createTable('phpdevil_migrations')
             ->column('id', 'char(14)')
             ->column('migration_date', 'timestamp')
+            ->column('comment', 'string(255)')
             ->key('primary')->onColls('id')
             ->execute();
     }
