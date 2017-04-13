@@ -67,6 +67,7 @@ class WebController extends Controller implements Renderable
      */
     public function formWidget($modelClass, $subAction, $config = [], $isNew = false)
     {
+        \Devil::app()->db;
         $widget = null;
         if (null === $subAction || $modelClass::accessControlStatic($subAction)) {
             $view = '//widgets/forms/default';

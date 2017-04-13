@@ -21,9 +21,5 @@ abstract class WebWidget
      */
     protected $provider;
 
-    final public function __construct(DataProviderInterface $provider, $config)
-    {
-        $this->provider = $provider;
-        $this->config = $config;
-    }
+
 }

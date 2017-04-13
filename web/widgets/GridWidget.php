@@ -3,6 +3,7 @@ namespace PhpDevil\framework\web\widgets;
 use PhpDevil\framework\web\WebWidget;
 use PhpDevil\framework\models\ModelInterface;
 use PhpDevil\ORM\models\ActiveRecordInterface;
+use PhpDevil\ORM\providers\DataProviderInterface;
 
 /**
  * Class GridWidget
@@ -14,6 +15,9 @@ class GridWidget extends WebWidget
     protected $columnsVisible = null;
 
     protected $inlineControlCount = null;
+
+    protected $sortables = null;
+
 
     public function isManualSortable()
     {
@@ -33,6 +37,17 @@ class GridWidget extends WebWidget
         }
     }
 
+    public function getCommonControls()
+    {
+        $ctrl = [];
+        if (isset($this->config['gridControls'])) foreach($this->config['gridControls'] as $c){
+            if (isset($c['href'])) $c['href'] = $this->config['baseUrl'] . '/' . $c['href'];
+
+            $ctrl[] = $c;
+        }
+        return $ctrl;
+    }
+
     public function attribute(ActiveRecordInterface $row, $alias)
     {
         return $row->$alias->getValue();
@@ -47,14 +62,29 @@ class GridWidget extends WebWidget
         return $this->inlineControlCount;
     }
 
-    public function getRows()
+    public function checkManualSort(ActiveRecordInterface $row)
     {
-        return $this->provider->all();
+        $row->checkForManualSort($this->sortables);
     }
 
-    public function getCommonControls()
+    public function getRows()
     {
+        $callback = null;
+        if ($this->isManualSortable()) $callback = [$this, 'checkManualSort'];
+        return $this->provider->all($callback);
+    }
 
+    public function getRowControls(ActiveRecordInterface $row)
+    {
+        $controls = [];
+        if (isset($this->config['rowControls'])) foreach($this->config['rowControls'] as $c) {
+            if ($row->accessControl($c['action'])) {
+                $c['href'] = $this->config['baseUrl'] . '/' . $row->fromTemplate($c['href']);
+                $c['isAllowed'] = true;
+            }
+            $controls[] = $c;
+        }
+        return $controls;
     }
 
     public function getColumnsNames()
@@ -67,5 +97,11 @@ class GridWidget extends WebWidget
     {
         $this->prepareVisibleColumns();
         return array_keys($this->columnsVisible);
+    }
+
+    final public function __construct(DataProviderInterface $provider, $config)
+    {
+        $this->provider = $provider;
+        $this->config = $config;
     }
 }
