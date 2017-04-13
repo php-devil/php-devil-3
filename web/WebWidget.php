@@ -24,8 +24,6 @@ abstract class WebWidget
     final public function __construct(DataProviderInterface $provider, $config)
     {
         $this->provider = $provider;
-        print_r($config);
-
         $this->config = $config;
     }
 }

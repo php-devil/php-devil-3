@@ -2,6 +2,7 @@
 namespace PhpDevil\framework\web\widgets;
 use PhpDevil\framework\web\WebWidget;
 use PhpDevil\framework\models\ModelInterface;
+use PhpDevil\ORM\models\ActiveRecordInterface;
 
 /**
  * Class GridWidget
@@ -13,6 +14,11 @@ class GridWidget extends WebWidget
     protected $columnsVisible = null;
 
     protected $inlineControlCount = null;
+
+    public function isManualSortable()
+    {
+        return $this->config['manualSort'];
+    }
 
     protected function prepareVisibleColumns()
     {
@@ -27,6 +33,11 @@ class GridWidget extends WebWidget
         }
     }
 
+    public function attribute(ActiveRecordInterface $row, $alias)
+    {
+        return $row->$alias->getValue();
+    }
+
     public function countControls()
     {
         if (null === $this->inlineControlCount) {
@@ -38,16 +49,23 @@ class GridWidget extends WebWidget
 
     public function getRows()
     {
-        return [];
+        return $this->provider->all();
     }
 
     public function getCommonControls()
     {
-        
+
     }
 
     public function getColumnsNames()
     {
         $this->prepareVisibleColumns();
+        return $this->columnsVisible;
+    }
+
+    public function getAttributes()
+    {
+        $this->prepareVisibleColumns();
+        return array_keys($this->columnsVisible);
     }
 }
