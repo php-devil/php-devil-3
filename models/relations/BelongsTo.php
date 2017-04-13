@@ -5,14 +5,14 @@ use PhpDevil\ORM\models\ActiveRecordInterface;
 
 class BelongsTo extends \PhpDevil\ORM\relations\BelongsTo
 {
-    public function getVariantsFor(ActiveRecordInterface $row, $template = null)
+    public function getVariantsFor($row, $template = null)
     {
 
         $variants = ($this->rightClassName)::findAll()->all()->rows();
 
         $result = [];
         $rf = $this->rightField;
-        $result[] = [
+        if ($this->leftClassName == $this->rightClassName) $result[] = [
             'key' => 0,
             'value' => '/',
             'level' => 0
