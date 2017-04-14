@@ -5,6 +5,7 @@ use PhpDevil\framework\base\Controller;
 use PhpDevil\framework\base\ModulePrototype;
 use PhpDevil\framework\components\page\Renderable;
 use PhpDevil\framework\models\ModelInterface;
+use PhpDevil\framework\models\StdForm;
 use PhpDevil\framework\web\widgets\ConfirmWidget;
 use PhpDevil\framework\web\widgets\FormWidget;
 use PhpDevil\framework\web\widgets\GridWidget;
@@ -72,7 +73,7 @@ class WebController extends Controller implements Renderable
         if (null === $subAction || $modelClass::accessControlStatic($subAction)) {
             $view = '//widgets/forms/default';
             if (isset($config['view'])) $view = $config['view'];
-            if ($isNew) {
+            if ($isNew || ($modelClass instanceof StdForm)) {
                 $model = $modelClass::model();
             } else {
                 $model = $modelClass::findByPK($config['entityID']);

@@ -7,9 +7,7 @@ class BelongsTo extends \PhpDevil\ORM\relations\BelongsTo
 {
     public function getVariantsFor($row, $template = null)
     {
-
         $variants = ($this->rightClassName)::findAll()->all()->rows();
-
         $result = [];
         $rf = $this->rightField;
         if ($this->leftClassName == $this->rightClassName) $result[] = [
