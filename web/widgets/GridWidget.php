@@ -78,10 +78,8 @@ class GridWidget extends WebWidget
     {
         $controls = [];
         if (isset($this->config['rowControls'])) foreach($this->config['rowControls'] as $c) {
-            if ($row->accessControl($c['action'])) {
-                $c['href'] = $this->config['baseUrl'] . '/' . $row->fromTemplate($c['href']);
-                $c['isAllowed'] = true;
-            }
+            $c['href'] = $this->config['baseUrl'] . '/' . $row->fromTemplate($c['href']);
+            $c['isAllowed'] = $row->accessControl($c['action']);
             $controls[] = $c;
         }
         return $controls;

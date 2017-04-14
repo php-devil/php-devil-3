@@ -77,6 +77,7 @@ class WebController extends Controller implements Renderable
                 $model = $modelClass::model();
             } else {
                 $model = $modelClass::findByPK($config['entityID']);
+                if (!$model->accessControl($subAction)) $view = '//widgets/errors/403';
             }
 
             if (isset($config['autosave']) && 'post' === $config['autosave']) {

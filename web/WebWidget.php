@@ -21,5 +21,12 @@ abstract class WebWidget
      */
     protected $provider;
 
-
+    public function getHint($name)
+    {
+        if (isset($this->config['hints'][$name])) {
+            return $this->config['hints'][$name];
+        } else {
+            return null;
+        }
+    }
 }
