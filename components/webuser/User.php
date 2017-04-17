@@ -54,7 +54,7 @@ class User extends Component implements UserInterface
         $userData = $this->storage->load();
         if (isset($userData['id'])) {
             $this->idenity = (((string) $this->config['idenity'])::findIdenity($userData['id']));
-            if ($this->idenity->validateAuthKey($userData['auth_key'])) {
+            if ($this->idenity && $this->idenity->validateAuthKey($userData['auth_key'])) {
                 return true;
             }
         }

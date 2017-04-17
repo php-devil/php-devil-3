@@ -22,4 +22,20 @@ trait AutoSaveExtension
         }
         return false;
     }
+
+    /**
+     * Автозпролнение атрибутов модели из $_POST без попытки
+     * валидации и сохранения
+     * @return bool
+     */
+    public function fillFromPost()
+    {
+        $id = str_replace('\\', '_', get_class($this));
+        if ($data = \Devil::app()->post->getOnce($id)) {
+            unset($data[$this->getRoleValue('id')]);
+            $this->setAttributes($data);
+            return true;
+        }
+        return false;
+    }
 }
