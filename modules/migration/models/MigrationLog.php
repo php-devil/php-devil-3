@@ -16,13 +16,18 @@ class MigrationLog
 {
     protected $connection;
 
+    public static function tableName()
+    {
+        return 'phpdevil_migrations';
+    }
+
     /**
      * Добавление миграции в лог БД после выполнения
      * @param MigrationInterface $migration
      */
     public function completeUp(MigrationInterface $migration)
     {
-        $query = (new InsertQueryBuilder())->into('phpdevil_migrations')->set([
+        $query = (new InsertQueryBuilder())->into(static::tableName())->set([
             'id' => $migration->getTime(),
             'comment' => $migration->comment(),
         ]);
@@ -49,7 +54,7 @@ class MigrationLog
         try {
             $query = (new SelectQueryBuilder())->select([
                 'max_value' => QueryExpression::max('id')
-            ])->from('phpdevil_migrations');
+            ])->from(static::tableName());
             $sql = $query->parse($this->connection->getDialect())->getSQL();
             $data = $this->connection->prepare($sql)->execute()->fetch();
             return $data['max_value'];

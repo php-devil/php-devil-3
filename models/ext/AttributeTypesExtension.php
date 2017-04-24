@@ -2,9 +2,13 @@
 namespace PhpDevil\framework\models\ext;
 
 use PhpDevil\framework\models\attributes\DatetimeAttribute;
+use PhpDevil\framework\models\attributes\EditorAttribute;
+use PhpDevil\framework\models\attributes\FileAttribute;
+use PhpDevil\framework\models\attributes\ImageAttribute;
 use PhpDevil\framework\models\attributes\IntegerAttribute;
 use PhpDevil\framework\models\attributes\PasswordAttribute;
 use PhpDevil\framework\models\attributes\StringAttribute;
+use PhpDevil\framework\models\attributes\TextAttribute;
 
 trait AttributeTypesExtension
 {
@@ -20,6 +24,12 @@ trait AttributeTypesExtension
 
         'datetime'  => DatetimeAttribute::class,
         'timestamp' => DatetimeAttribute::class,
+
+        'text'      => TextAttribute::class,
+        'editor'    => EditorAttribute::class,
+
+        'file'      => FileAttribute::class,
+        'image'     => ImageAttribute::class,
     ];
 
     public static function getAttributeClass($type)

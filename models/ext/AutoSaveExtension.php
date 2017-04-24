@@ -12,6 +12,11 @@ trait AutoSaveExtension
         $id = str_replace('\\', '_', get_class($this));
         if ($data = \Devil::app()->post->getOnce($id)) {
             unset($data[$this->getRoleValue('id')]);
+            if (isset($data['clearAttachment'])) {
+                foreach (array_keys($data['clearAttachment']) as $attr) {
+                    $this->clearAttached($attr);
+                }
+            }
             $this->setAttributes($data);
             if ($this->validate()) {
                 $this->save();

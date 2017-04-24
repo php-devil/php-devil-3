@@ -1,6 +1,7 @@
 <?php
 namespace PhpDevil\framework\components\db;
 use PhpDevil\framework\models\relations\BelongsTo;
+use PhpDevil\framework\models\relations\HasMany;
 use PhpDevil\orm\connector\ExtendableConnector;
 use PhpDevil\orm\generic\ConnectionInterface;
 
@@ -26,6 +27,7 @@ class Connector
         foreach ($config as $name=>$conf) \PhpDevil\ORM\Connector::getInstance()->createConnection($name, $conf);
         \PhpDevil\ORM\Connector::getInstance()->setRelationClasses([
             'BelongsTo' => BelongsTo::class,
+            'HasMany'   => HasMany::class,
         ]);
     }
 }

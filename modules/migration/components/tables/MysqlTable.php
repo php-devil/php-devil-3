@@ -33,6 +33,19 @@ class MysqlTable extends AbstractTable
         }
     }
 
+    protected function getRealType($type)
+    {
+        if (0 === strpos($type, 'string(')) {
+            return str_replace('string(', 'varchar(', $type);
+        } elseif (in_array($type, ['text', 'editor'])) {
+            return 'text';
+        } elseif (in_array($type, ['file', 'image'])) {
+            return  'varchar(255)';
+        } else {
+            return $type;
+        }
+    }
+
     /**
      * Построение выражения для атрибута (поля) таблицы
      * @param $param
@@ -40,7 +53,7 @@ class MysqlTable extends AbstractTable
      */
     protected function buildAttribute($param)
     {
-        if (0 === strpos($param['type'], 'string(')) $param['type'] = str_replace('string(', 'varchar(', $param['type']);
+        $param['type'] = $this->getRealType($param['type']);
         $query = strtolower($param['type']);
         if ($param['notnull']) $query .= ' NOT NULL';
         if (isset($param['extra']) && !empty($param['extra'])) foreach ($param['extra'] as $e){

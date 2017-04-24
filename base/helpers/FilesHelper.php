@@ -21,4 +21,17 @@ class FilesHelper
             return $fullDirectoryPath;
         }
     }
+
+    /**
+     * Создание управляющего коасса для зпгрузки медиавложений моделей
+     * @param $config
+     * @param null $currentFilename
+     * @param null $newFileData
+     * @return mixed
+     */
+    public static function createUploadableFile($config, $currentFilename = null, $newFileData = null)
+    {
+        $className = '\\PhpDevil\\framework\\base\\helpers\\files\\' . ucfirst($config['type']) . 'File';
+        return new $className($config, $currentFilename, $newFileData);
+    }
 }
