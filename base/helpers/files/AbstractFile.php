@@ -67,6 +67,7 @@ abstract class AbstractFile
      */
     public function remove()
     {
+
         $origin = $destination = \Devil::getPathOf($this->config['dest']);
         if (isset($this->config['onload'])) {
             $destination .= '/origin';

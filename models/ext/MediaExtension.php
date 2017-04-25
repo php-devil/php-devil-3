@@ -66,4 +66,16 @@ trait MediaExtension
             $v->setPrimaryKey($this->getRoleValue('id'))->upload();
         }
     }
+
+    public function removeMedia()
+    {
+        $config = static::getConfig();
+        if (isset($config['media'])) {
+            foreach ($config['media'] as $attribute=>$options) {
+                FilesHelper::createUploadableFile($options, $this->$attribute->getValue())
+                    ->setPrimaryKey($this->getRoleValue('id'))->remove();
+                $this->$attribute->setValue(null);
+            }
+        }
+    }
 }

@@ -26,6 +26,16 @@ abstract class Controller extends ControllerPrototype implements ControllerInter
         return $this->getOwner()->loadModel($tagName);
     }
 
+    public function modelClass($tagName)
+    {
+        $models = ($this->getOwner())::models();
+        if (isset($models[$tagName])) {
+            return $models[$tagName];
+        } else {
+            return null;
+        }
+    }
+
     final protected function runActionMethod($actionName, $param = [], $realMethod = null)
     {
         if (null === $realMethod) $realMethod = 'action' . $actionName;
@@ -65,8 +75,8 @@ abstract class Controller extends ControllerPrototype implements ControllerInter
                     if (method_exists($this, 'action' . $tryMethod)) {
                         $this->runActionMethod($tryMethod);
                     } elseif (method_exists($this, $modelAction)) {
-                        if ($this->beforeAction($tryMethod)) {
-                            $this->$modelAction($this->loadModel($model), $param);
+                        if ($this->beforeAction($tryMethod) && method_exists($this, 'performTagAction')) {
+                            $this->performTagAction($model, $modelAction);
                             $this->afterAction($tryMethod);
                         } else {
                             $this->errorAction($tryMethod);

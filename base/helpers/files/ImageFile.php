@@ -45,7 +45,8 @@ class ImageFile extends AbstractFile
 
     public function resizeRemove($destRoot, $fileName, $options)
     {
-        if (!isset($options['thumb'])) $options['thumb'] = ['method'=>'width', 'w'=>320];
+
+        if (!isset($options['thumb'])) $options['thumb'] = ['method'=>'width', 'w'=>120];
         foreach ($options as $size=>$param) {
             $deleteName = $destRoot . '/' . $size . '/' . $fileName;
             if (file_exists($deleteName)) unlink($deleteName);
